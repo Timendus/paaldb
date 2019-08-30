@@ -1,0 +1,18 @@
+{
+  "name": "paaldb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js $npm_package_config_port"
+  },
+  "author": "Tim Franssen",
+  "license": "GPL-3.0-or-later",
+  "config": {
+    "port": 9441
+  },
+  "dependencies": {
+    "node-html-parser": "^1.1.16",
+    "xml-js": "^1.6.11"
+  }
+}
