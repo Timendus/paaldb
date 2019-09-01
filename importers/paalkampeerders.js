@@ -1,12 +1,15 @@
 // Settings
-const description = "Update paalkampeerders map from Stefan's Google site";
+const name        = "Stefan Kruithof";
+const description = "Update paalkampeerders map from Stefan Kruithof's Google site";
 const serviceURL  = "https://www.google.com/maps/d/kml?forcekml=1&mid=1SdsMhcQBTrVjABZaLXYPJZeOgfA";
 const startTime   = "03:00:00";
 
 // Dependencies
-const Request    = require('../util/request');
-const taskRunner = require('../util/task-runner');
-const convert    = require('xml-js');
+const Request      = require('../util/request');
+const taskRunner   = require('../util/task-runner');
+const importHelper = require('../util/import-helper');
+const {Mention}    = require('../models');
+const convert      = require('xml-js');
 
 // Function to query the map
 const fetch = (now) => {
@@ -20,17 +23,31 @@ const fetch = (now) => {
       trim:              true
     });
 
-    // Cherry pick the interesting bits
-    const name = result.kml.Document.name._text;
-    const desc = result.kml.Document.description._cdata;
-    const places = result.kml.Document.Folder.Placemark;
+    // Collect source information
+    const source = {
+      name:        name,
+      description: result.kml.Document.description._cdata,
+      contact:     "<a href='mailto:stefankruithof@gmail.com'>stefankruithof@gmail.com</a>"
+    };
 
-    // Output for fun and giggles
-    console.log(name);
-    console.log(desc);
-    places.forEach((p) => {
-      console.log(p.name._text, p.styleUrl._text, p.Point.coordinates._text);
+    // Collect the locations we mention
+    const mentions = result.kml.Document.Folder.Placemark.map((p) => {
+      const [lon, lat] = p.Point.coordinates._text.split(',');
+
+      // Stefan uses different icons to indicate different locations
+      const stale   = p.styleUrl._text == '#icon-1125';
+      const shelter = p.styleUrl._text == '#icon-117';
+
+      return {
+        name:        p.name._text,
+        latitude:    lat,
+        longitude:   lon,
+        status:      stale ? Mention.status.STALE : Mention.status.ACTIVE
+      }
     });
+
+    // Save this data
+    importHelper.save(name, source, mentions);
 
   });
 }

@@ -12,7 +12,13 @@
     "port": 9441
   },
   "dependencies": {
+    "mysql2": "^1.7.0",
     "node-html-parser": "^1.1.16",
+    "sequelize": "^5.17.2",
+    "uuid": "^3.3.3",
     "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^5.5.0"
   }
 }
