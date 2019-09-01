@@ -1,4 +1,5 @@
 // Settings
+const name        = "Natuurbrandrisico";
 const description = "Update fire hazard status for all Dutch regions";
 const serviceURL  = "https://www.natuurbrandrisico.nl/maps/script_all_regios.js";
 const startTime   = "03:00:00";
@@ -29,5 +30,5 @@ const fetch = (now) => {
 // Schedule our task
 taskRunner.schedule(description, startTime, fetch);
 
-// Make fetch method available for testing
-module.exports.fetch = fetch;
+// Make name and fetch method available to the outside world
+module.exports = { name, fetch };

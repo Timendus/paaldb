@@ -1,29 +1,5 @@
-let thing = require('./importers/paalkampeerders');
+const {stefanKruithof, staatsbosbeheer, natuurbrandrisico} = require('./importers');
 
-thing.fetch(Date.now());
-//
-// let {Location, Source, Mention} = require('./models');
-//
-// Location.create({
-//   name: 'De Natte Plassen'
-// }).then((loc) => {
-//   console.log(loc);
-//   console.log('done');
-// });
-//
-//
-// Source.create({
-//   name: 'Staatsbosbeheer'
-// }).then((loc) => {
-//   console.log(loc);
-//   console.log('done');
-//
-//   Mention.create({
-//     name: 'De Natte Plassen',
-//     SourceId: loc.id
-//   }).then((loc) => {
-//     console.log(loc);
-//     console.log('done');
-//   });
-//
-// });
+stefanKruithof.fetch(Date.now());
+staatsbosbeheer.fetch(Date.now());
+natuurbrandrisico.fetch(Date.now());

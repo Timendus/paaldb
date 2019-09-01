@@ -64,8 +64,8 @@ module.exports = {
             m.save();
           });
 
-          Logger.log(`Newly created mentions (${created.length}): [${created.map(c => c.name).join(',')}]`);
-          Logger.log(`Mentions marked as stale (${stale.length}): [${stale.map(c => c.name).join(',')}]`);
+          Logger.log(`Importer ${importer}: Newly created mentions (${created.length}): [${created.map(c => c.name).join(',')}]`);
+          Logger.log(`Importer ${importer}: Mentions marked as stale (${stale.length}): [${stale.map(c => c.name).join(',')}]`);
         });
       });
     });
