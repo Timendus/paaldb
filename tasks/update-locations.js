@@ -1,62 +1,58 @@
 // Settings
 const name        = "Update locations";
-const description = "Create and update locations from mentions";
-const startTime   = "02:30:00";
+const description = "Update locations from mentions";
+const startTime   = "03:00:00";  // Start after task that creates and links locations
 
 // Dependencies
 const taskRunner          = require('../util/task-runner');
+const Logger              = require('../util/logger');
 const {Location, Mention} = require('../models');
 
-// Function to create and update locations
+// Function to update locations
 const update = (now) => {
-  const m = Mention.findAll({
+  Location.findAll({
     include: [{
-      model: Location
+      model: Mention
     }]
-  });
-
-  const l = Location.findAll();
-
-  Promise.all([m, l]).then(([mentions, locations]) => {
-
-    // Find the right location for each mention, or create a new one
-    promises = [];
-    mentions.forEach(mention => {
-      promises.push(mention.getLocation().then(location => {
-        if ( !location ) {
-          location = Location.findNearestInMemory({
-            locations: locations,
-            latitude:  mention.latitude,
-            longitude: mention.longitude
-          });
-
-          if ( location && location.distance < 0.005 ) {
-            // mention.setLocation(location);
-            location.mentions ||= [];
-            location.mentions.push(mention);
-          } else {
-            locations.push({
-              name: mention.name,
-              latitude: mention.latitude,
-              longitude: mention.longitude,
-              mentions: [mention]
-            });
-          }
-        }
-      }));
-    });
-
-    Promise.all(promises).then(() => {
-      console.log(locations.length);
-
-      // Store all Locations
-      // TODO: don't re-create existing locations!
-      Location.bulkCreate(locations, {returning: true, individualHooks: true})
-      .then(locationObjs => {
-        // TODO: Map locations to locationObjs, find mentions, update mentions
-      })
+  }).then(locations => {
+    locations.forEach(location => {
+      if ( location.Mentions.length == 0 ) return;
+      location.name      = createName(location.Mentions.map(m => m.name));
+      location.latitude  = average(location.Mentions.map(m => m.latitude));
+      location.longitude = average(location.Mentions.map(m => m.longitude));
+      location.save();
     });
   });
+}
+
+function createName(names) {
+  // Create mapping lowercase name => actual name
+  names = names.filter(n => n) // Exclude empty names
+               .reduce((o,n) => {
+                 o[n.toLowerCase()] = n;
+                 return o
+               }, {});
+
+  // Are all names the same, ignoring capitalisation?
+  if ( Object.keys(names).length == 1 )
+    return Object.values(names)[0];
+
+  // Are some names substrings of other names?
+  Object.keys(names).forEach(a => {
+    Object.keys(names).forEach(b => {
+      if ( a == b ) return;
+      if ( a.includes(b) ) delete names[b];
+    });
+  });
+
+  // Otherwise, just show all available names
+  return Object.values(names).join(' / ');
+}
+
+function average(values) {
+  values = values.filter(n => n); // Exclude empty
+  total = values.reduce((r,v) => r + v, 0);
+  return total / values.length;
 }
 
 // Schedule our task
