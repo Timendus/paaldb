@@ -18,8 +18,8 @@ Mention.init({
   modelName: 'Mention'
 });
 
-Mention.beforeCreate((location, _) => {
-  return location.id = uuid();
+Mention.beforeCreate((mention, _) => {
+  return mention.id = uuid();
 });
 
 Mention.belongsTo(Source);
