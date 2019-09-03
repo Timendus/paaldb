@@ -2,7 +2,7 @@
 const name        = "Stefan Kruithof";
 const description = "Update paalkampeerders map from Stefan Kruithof's Google site";
 const serviceURL  = "https://www.google.com/maps/d/kml?forcekml=1&mid=1SdsMhcQBTrVjABZaLXYPJZeOgfA";
-const startTime   = "03:00:00";
+const startTime   = "02:00:00";
 
 // Dependencies
 const Request      = require('../util/request');

@@ -2,7 +2,7 @@
 const name        = "Staatsbosbeheer";
 const description = "Update Staatsbosbeheer locations from their website";
 const serviceURL  = "https://www.logerenbijdeboswachter.nl/paalkamperen";
-const startTime   = "03:00:00";
+const startTime   = "02:00:00";
 
 // Dependencies
 const Request      = require('../util/request');
