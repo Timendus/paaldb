@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const basename = path.basename(__filename);
-const importers = {};
+const tasks = {};
 
 function camelize(str) {
   return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
@@ -16,8 +16,8 @@ fs.readdirSync(__dirname)
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
   .forEach(file => {
-    const importer = require(path.join(__dirname, file));
-    importers[camelize(importer.name)] = importer;
+    const task = require(path.join(__dirname, file));
+    tasks[camelize(task.name)] = task;
   });
 
-module.exports = importers;
+module.exports = tasks;

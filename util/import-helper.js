@@ -3,11 +3,11 @@ const Logger            = require('./logger');
 
 module.exports = {
 
-  save: (importer, source, mentions) => {
+  save: (task, source, mentions) => {
 
-    // If no data, assume importer or remote source is broken and don't touch the database
+    // If no data, assume task or remote source is broken and don't touch the database
     if ( !source.name || !source.description || !source.contact || mentions.length == 0 )
-      return Logger.error(`Importer ${importer} seems to be down`);
+      return Logger.error(`Task ${task} seems to be down`);
 
     // Find or create our source in the database
     Source.findOrCreate({
@@ -64,8 +64,8 @@ module.exports = {
             m.save();
           });
 
-          Logger.log(`Importer ${importer}: Newly created mentions (${created.length}): [${created.map(c => c.name).join(',')}]`);
-          Logger.log(`Importer ${importer}: Mentions marked as stale (${stale.length}): [${stale.map(c => c.name).join(',')}]`);
+          Logger.log(`Task ${task}: Newly created mentions (${created.length}): [${created.map(c => c.name).join(',')}]`);
+          Logger.log(`Task ${task}: Mentions marked as stale (${stale.length}): [${stale.map(c => c.name).join(',')}]`);
         });
       });
     });

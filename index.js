@@ -14,6 +14,6 @@ const server = http.createServer((request, response) => {
 server.listen(port, () => Logger.log(`Server is listening on port ${port}`));
 
 
-// Run importers
+// Run tasks
 
-const importers = require('./importers');
+const tasks = require('./tasks');
