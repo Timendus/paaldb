@@ -15,13 +15,20 @@ const update = (now) => {
       model: Mention
     }]
   }).then(locations => {
+    numChanged = 0;
+
     locations.forEach(location => {
       if ( location.Mentions.length == 0 ) return;
       location.name      = createName(location.Mentions.map(m => m.name));
       location.latitude  = average(location.Mentions.map(m => m.latitude));
       location.longitude = average(location.Mentions.map(m => m.longitude));
+
+      // This is terribly sloppy, probably due to rounding of the coordinates
+      if ( location.changed() ) numChanged++;
       location.save();
     });
+
+    Logger.log(`Updated fields on ${numChanged} locations`);
   });
 }
 

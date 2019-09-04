@@ -21,10 +21,10 @@ const update = (now) => {
   Promise.all([mp, lp]).then(([mentions, locations]) => {
     const {locationsToCreate, locationsToLink} = findLocations(locations, mentions);
 
-    Logger.log(`Updating locations: ${locationsToCreate.length} new locations to create and ${locationsToLink.length} locations to link to new mentions`);
-
     createLocations(locationsToCreate);
     linkLocations(locationsToLink);
+
+    Logger.log(`Created ${locationsToCreate.length} new locations and linked ${locationsToLink.length} locations to new mentions`);
   });
 }
 
