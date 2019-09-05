@@ -65,9 +65,9 @@ information on paalkampeer locations:
 
 * [x] [Staatsbosbeheer](https://www.logerenbijdeboswachter.nl/paalkamperen)
 * [x] [Stefan Kruithof's map](https://sites.google.com/site/paalkampeerders/kaart)
-* [ ] [Kampeermeneer](https://www.kampeermeneer.nl/paalkamperen/)
-* [ ] [Rugzaklopers](http://www.communitywalk.com/14583)
-* [ ] [Wild-kamperen.nl](https://www.wild-kamperen.nl/paalkamperen-wildkamperen/)
+* [x] [Kampeermeneer](https://www.kampeermeneer.nl/paalkamperen/)
+* [x] [Rugzaklopers](http://www.communitywalk.com/14583)
+* [x] [Wild-kamperen.nl](https://www.wild-kamperen.nl/paalkamperen-wildkamperen/)
 * [ ] [Hiking-site.nl](https://www.hiking-site.nl/routes_paalkamperen.php)
 * [ ] [Natuur en Bos](https://www.natuurenbos.be/kamperen) (Belgium)
 * [ ] [Bivakzone.be](http://www.bivakzone.be/) (Belgium)
@@ -81,10 +81,10 @@ touch with me through [mail@timendus.com](mailto:mail@timendus.com).
 
 ## Status of the software
 
-This software can currently import locations from a limited number of sources.
-It then tries to merge the information as best as it can into a single table
-with locations. The next step is to add an API on top of that so that other
-projects can build on top of this one.
+This software can currently import locations from several sources. It then tries
+to merge the information as best as it can into a single table with locations.
+The next step is to add an API on top of that so that other projects can build
+on top of this one.
 
 Another thing to do is to add more importers. This shouldn't be too hard. The
 importers I've written so far are for a KML file and to parse a static website.
