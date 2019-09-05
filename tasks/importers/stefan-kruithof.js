@@ -5,10 +5,10 @@ const serviceURL  = "https://www.google.com/maps/d/kml?forcekml=1&mid=1SdsMhcQBT
 const startTime   = "02:00:00";
 
 // Dependencies
-const Request      = require('../util/request');
-const taskRunner   = require('../util/task-runner');
-const importHelper = require('../util/import-helper');
-const {Mention}    = require('../models');
+const Request      = require('../../util/request');
+const taskRunner   = require('../../util/task-runner');
+const importHelper = require('../../util/import-helper');
+const {Mention}    = require('../../models');
 const convert      = require('xml-js');
 
 // Function to query the map

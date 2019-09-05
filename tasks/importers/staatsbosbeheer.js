@@ -5,9 +5,9 @@ const serviceURL  = "https://www.logerenbijdeboswachter.nl/paalkamperen";
 const startTime   = "02:00:00";
 
 // Dependencies
-const Request      = require('../util/request');
-const taskRunner   = require('../util/task-runner');
-const importHelper = require('../util/import-helper');
+const Request      = require('../../util/request');
+const taskRunner   = require('../../util/task-runner');
+const importHelper = require('../../util/import-helper');
 const parser       = require('node-html-parser');
 
 // Function to query the paalkamperen page

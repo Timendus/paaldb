@@ -5,10 +5,10 @@ const serviceURL  = "http://www.communitywalk.com/xml/kml/14583";
 const startTime   = "02:00:00";
 
 // Dependencies
-const Request      = require('../util/request');
-const taskRunner   = require('../util/task-runner');
-const importHelper = require('../util/import-helper');
-const {Mention}    = require('../models');
+const Request      = require('../../util/request');
+const taskRunner   = require('../../util/task-runner');
+const importHelper = require('../../util/import-helper');
+const {Mention}    = require('../../models');
 const convert      = require('xml-js');
 
 // Function to query the map

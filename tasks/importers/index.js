@@ -21,3 +21,4 @@ fs.readdirSync(__dirname)
   });
 
 module.exports = tasks;
+module.exports.name = "importers";
