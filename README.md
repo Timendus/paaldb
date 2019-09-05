@@ -1,6 +1,6 @@
 # PaalDB
 
-__A smart database of paalkampeer locations__
+_A smart database of paalkampeer locations_
 
 This is a pretty niche project. Paalkamperen is a concept not many people will
 be familiar with. So it deserves some extra explanation.
@@ -73,7 +73,7 @@ information on paalkampeer locations:
 * [ ] [Bivakzone.be](http://www.bivakzone.be/) (Belgium)
 * And [various threads](http://forum.bushcraftnederland.nl/viewtopic.php?t=14504) with people [sharing other](https://www.wereldfietser.nl/phpbb/viewtopic.php?t=31030) random maps
 
-__Checked means locations can be automatically imported__
+_Checked means locations can be automatically imported_
 
 If you know of other sources, or if you're interested in helping to write an
 importer for one of these sources (maybe you own the website..?) please get in
