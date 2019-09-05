@@ -1,5 +1,15 @@
-const {stefanKruithof, staatsbosbeheer, natuurbrandrisico} = require('./importers');
+const { stefanKruithof,
+        staatsbosbeheer,
+        natuurbrandrisico,
+        createAndLinkLocations,
+        updateLocations } = require('./tasks');
 
-stefanKruithof.fetch(Date.now());
-staatsbosbeheer.fetch(Date.now());
-natuurbrandrisico.fetch(Date.now());
+
+now = Date.now();
+
+// stefanKruithof.fetch(now);
+// staatsbosbeheer.fetch(now);
+// natuurbrandrisico.fetch(now);
+
+setTimeout(() => createAndLinkLocations.update(now), 2000);
+setTimeout(() => updateLocations.update(now), 4000);

@@ -16,4 +16,4 @@ server.listen(port, () => Logger.log(`Server is listening on port ${port}`));
 
 // Run tasks
 
-const tasks = require('./tasks');
+require('./tasks');

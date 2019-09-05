@@ -4,16 +4,14 @@
     "password": "password",
     "database": "database_name",
     "host": "127.0.0.1",
-    "dialect": "mysql",
-    "logging": true
+    "dialect": "mysql"
   },
   "test": {
     "username": "user",
     "password": "password",
     "database": "database_name",
     "host": "127.0.0.1",
-    "dialect": "mysql",
-    "logging": true
+    "dialect": "mysql"
   },
   "production": {
     "username": "user",
