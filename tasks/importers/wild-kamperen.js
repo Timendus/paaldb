@@ -1,22 +1,14 @@
-// Settings
-const name        = "Stichting wildkamperen";
-const description = "Update paalkampeerplaatsen map from stichting wild-kamperen.nl";
-const serviceURL  = "https://www.wild-kamperen.nl/wp-content/plugins/leaflet-maps-marker/leaflet-kml.php?layer=1&name=show";
-const startTime   = "02:00:00";
-
-// Dependencies
 const Request      = require('../../util/request');
-const taskRunner   = require('../../util/task-runner');
 const importHelper = require('../../util/import-helper');
+const parser       = require('xml-js');
 const {Mention}    = require('../../models');
-const convert      = require('xml-js');
 
-// Function to query the map
-const fetch = (now) => {
-  new Request(serviceURL).then((result) => {
+module.exports.run = () => {
+  return new Request("https://www.wild-kamperen.nl/wp-content/plugins/leaflet-maps-marker/leaflet-kml.php?layer=1&name=show")
+  .then((result) => {
 
     // Parse KML file
-    result = convert.xml2js(result, {
+    result = parser.xml2js(result, {
       compact:           true,
       ignoreDeclaration: true,
       ignoreAttributes:  true,
@@ -25,7 +17,7 @@ const fetch = (now) => {
 
     // Collect source information
     const source = {
-      name:        name,
+      name:        "Stichting wildkamperen",
       description: "Dankzij jou zijn wij instaat om creatieve, informatieve en inspirerende outdoorcontent te (blijven) maken. Zo testen wij bivakzones & paalkampeerplaatsen zodat jij weet waar je back to basic kunt verblijven. We lobbyen actief voor meer locaties en adviseren particulieren en organisaties hoe ze de ideale verblijfslocatie kunnen inrichten. Daarnaast reviewen wij outdoorproducten en delen wij technieken. Tot slot zetten wij ons in voor het belang van natuureducatie, dit doen wij oa. door het aanbieden van laagdrempelige workshops.",
       contact:     "<a href='https://www.wild-kamperen.nl/contact/'>Contactformulier stichting wild-kamperen.nl</a>"
     };
@@ -48,13 +40,11 @@ const fetch = (now) => {
     });
 
     // Save this data
-    importHelper.save(name, source, mentions);
+    return importHelper.save({
+      task: __filename,
+      source,
+      mentions
+    });
 
   });
 }
-
-// Schedule our task
-taskRunner.schedule(description, startTime, fetch);
-
-// Make name and fetch method available to the outside world
-module.exports = { name, fetch };

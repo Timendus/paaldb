@@ -1,18 +1,10 @@
-// Settings
-const name        = "Staatsbosbeheer";
-const description = "Update Staatsbosbeheer locations from their website";
-const serviceURL  = "https://www.logerenbijdeboswachter.nl/paalkamperen";
-const startTime   = "02:00:00";
-
-// Dependencies
 const Request      = require('../../util/request');
-const taskRunner   = require('../../util/task-runner');
 const importHelper = require('../../util/import-helper');
 const parser       = require('node-html-parser');
 
-// Function to query the paalkamperen page
-const fetch = (now) => {
-  new Request(serviceURL).then((result) => {
+module.exports.run = () => {
+  return new Request("https://www.logerenbijdeboswachter.nl/paalkamperen")
+  .then((result) => {
 
     // Parse HTML file
     result = parser.parse(result);
@@ -22,7 +14,7 @@ const fetch = (now) => {
     const phone = result.querySelector('a.tel').attributes.href;
 
     const source = {
-      name:        name,
+      name:        "Staatsbosbeheer",
       description: result.querySelector('div.content').innerHTML,
       contact:     `<a href='${mail}'>${mail.split(':')[1]}</a>, <a href="${phone}">${phone.split(':')[1]}</a>`
     };
@@ -43,13 +35,11 @@ const fetch = (now) => {
     });
 
     // Save this data
-    importHelper.save(name, source, mentions);
+    return importHelper.save({
+      task: __filename,
+      source,
+      mentions
+    });
 
   });
 }
-
-// Schedule our task
-taskRunner.schedule(description, startTime, fetch);
-
-// Make name and fetch method available to the outside world
-module.exports = { name, fetch };
