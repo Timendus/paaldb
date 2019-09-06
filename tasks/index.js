@@ -4,12 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const basename = path.basename(__filename);
 const tasks = {};
-
-function camelize(str) {
-  return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
-    return index == 0 ? word.toLowerCase() : word.toUpperCase();
-  }).replace(/\s+/g, '');
-}
+const camelcase = require('../util/camelcase');
 
 fs.readdirSync(__dirname)
   .filter(file => {
@@ -17,7 +12,7 @@ fs.readdirSync(__dirname)
   })
   .forEach(file => {
     const task = require(path.join(__dirname, file));
-    tasks[camelize(task.name)] = task;
+    tasks[camelcase(task.name)] = task;
   });
 
 module.exports = tasks;
