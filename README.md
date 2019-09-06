@@ -70,14 +70,14 @@ information on paalkampeer locations:
 * [x] [Wild-kamperen.nl](https://www.wild-kamperen.nl/paalkamperen-wildkamperen/)
 * [ ] [Hiking-site.nl](https://www.hiking-site.nl/routes_paalkamperen.php)
 * [ ] [Natuur en Bos](https://www.natuurenbos.be/kamperen) (Belgium)
-* [ ] [Bivakzone.be](http://www.bivakzone.be/) (Belgium)
+* [x] [Bivakzone.be](http://www.bivakzone.be/) (Belgium)
 * And [various threads](http://forum.bushcraftnederland.nl/viewtopic.php?t=14504) with people [sharing other](https://www.wereldfietser.nl/phpbb/viewtopic.php?t=31030) random maps
 
 _Checked means locations can be automatically imported_
 
-If you know of other sources, or if you're interested in helping to write an
-importer for one of these sources (maybe you own the website..?) please get in
-touch with me through [mail@timendus.com](mailto:mail@timendus.com).
+If you know of other sources, or if you're interested in helping to write or
+improve an importer for one of these sources (maybe you own the website..?)
+please get in touch with me through [mail@timendus.com](mailto:mail@timendus.com).
 
 ## Status of the software
 

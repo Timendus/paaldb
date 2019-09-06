@@ -11,6 +11,7 @@ now = Date.now();
 // importers.kampeermeneer.fetch(now);
 // importers.communityWalk.fetch(now);
 // importers.stichtingWildkamperen.fetch(now);
+// importers.bivakzone.fetch(now);
 
 setTimeout(() => createAndLinkLocations.update(now), 2000);
 setTimeout(() => updateLocations.update(now), 4000);
