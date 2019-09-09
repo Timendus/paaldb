@@ -1,20 +1,16 @@
-// Settings
-const name        = "Update locations";
-const description = "Update locations from mentions";
-const startTime   = "03:00:00";  // Start after task that creates and links locations
-
-// Dependencies
 const taskRunner          = require('../util/task-runner');
 const Logger              = require('../util/logger');
 const {Location, Mention} = require('../models');
 
 // Function to update locations
-const update = (now) => {
+module.exports.run = () => {
   Location.findAll({
     include: [{
       model: Mention
     }]
-  }).then(locations => {
+  })
+
+  .then(locations => {
     numChanged = 0;
 
     locations.forEach(location => {
@@ -61,9 +57,3 @@ function average(values) {
   total = values.reduce((r,v) => r + v, 0);
   return total / values.length;
 }
-
-// Schedule our task
-taskRunner.schedule(description, startTime, update);
-
-// Make name and fetch method available to the outside world
-module.exports = { name, update };

@@ -3,9 +3,10 @@ const importHelper = require('../../util/import-helper');
 const parser       = require('xml-js');
 const {Mention}    = require('../../models');
 
+// Function to query the map
 module.exports.run = () => {
   return new Request("https://www.wild-kamperen.nl/wp-content/plugins/leaflet-maps-marker/leaflet-kml.php?layer=1&name=show")
-  .then((result) => {
+  .then(result => {
 
     // Parse KML file
     result = parser.xml2js(result, {
@@ -23,7 +24,7 @@ module.exports.run = () => {
     };
 
     // Collect the locations we mention
-    const mentions = result.kml.Document.Folder.Placemark.map((p) => {
+    const mentions = result.kml.Document.Folder.Placemark.map(p => {
       const [lon, lat] = p.Point.coordinates._text.split(',');
 
       // wild-kamperen.nl uses different icons to indicate different locations

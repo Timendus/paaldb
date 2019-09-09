@@ -2,9 +2,10 @@ const Request      = require('../../util/request');
 const importHelper = require('../../util/import-helper');
 const parser       = require('node-html-parser');
 
+// Function to query the Staatsbosbeheer website
 module.exports.run = () => {
   return new Request("https://www.logerenbijdeboswachter.nl/paalkamperen")
-  .then((result) => {
+  .then(result => {
 
     // Parse HTML file
     result = parser.parse(result);

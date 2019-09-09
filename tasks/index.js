@@ -1,12 +1,13 @@
 const requireDir = require('../util/require-dir');
 const Logger     = require('../util/logger');
+
 const { natuurbrandrisico,
         createAndLinkLocations,
         updateLocations,
         importers } = requireDir(__filename, __dirname);
 
 module.exports.run = () => {
-  return Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
 
     // First, run all impoters
     Promise.all(
@@ -30,8 +31,11 @@ module.exports.run = () => {
     })
 
     // What to do when things go wrong..?
-    .catch((error) => {
+    .catch(error => {
       Logger.error(`Woops, one of our tasks misbehaved! ${error}`);
+
+      // But the show must go on
+      resolve();
     });
   });
 }

@@ -1,30 +1,36 @@
-// Settings
-const name        = "Create and link locations";
-const description = "Create locations and link to mentions";
-const startTime   = "02:30:00";  // Start after tasks that create mentions
-
-// Dependencies
 const taskRunner          = require('../util/task-runner');
 const Logger              = require('../util/logger');
 const {Location, Mention} = require('../models');
 
 // Function to create and link locations
-const update = (now) => {
-  const mp = Mention.findAll({
-    include: [{
-      model: Location
-    }]
-  });
+module.exports.run = () => {
+  return new Promise((resolve, reject) => {
+    const mp = Mention.findAll({
+      include: [{
+        model: Location
+      }]
+    });
 
-  const lp = Location.findAll();
+    const lp = Location.findAll();
 
-  Promise.all([mp, lp]).then(([mentions, locations]) => {
-    const {locationsToCreate, locationsToLink} = findLocations(locations, mentions);
+    Promise.all([mp, lp]).then(([mentions, locations]) => {
+      const {locationsToCreate, locationsToLink} = findLocations(locations, mentions);
 
-    createLocations(locationsToCreate);
-    linkLocations(locationsToLink);
+      console.log("Still here!");
 
-    Logger.log(`Created ${locationsToCreate.length} new locations and linked ${locationsToLink.length} locations to new mentions`);
+      createLocations(locationsToCreate).then(() => {
+        console.log("Not here anymore");
+        linkLocations(locationsToLink).then(() => {
+          console.log("And here");
+          Logger.log(`Created ${locationsToCreate.length} new locations and linked ${locationsToLink.length} locations to new mentions`);
+          resolve();
+        });
+      });
+    })
+
+    .catch(error => {
+      reject(error);
+    });
   });
 }
 
@@ -76,23 +82,20 @@ function findLocations(locations, mentions) {
 }
 
 function createLocations(locations) {
-  locations.forEach(location => {
-    Location.create(location).then(record => {
-      record.setMentions(location.mentions);
-      record.save();
-    });
-  });
+  return Promise.all(
+    locations.map(location => {
+      Location.create(location)
+      .then(record => {
+        record.setMentions(location.mentions);
+        return record.save();
+      });
+    })
+  );
 }
 
 function linkLocations(locations) {
-  locations.forEach(location => {
+  return Promise.all(locations.map(location => {
     location.setMentions(location.mentions);
-    location.save();
-  });
+    return location.save();
+  }));
 }
-
-// Schedule our task
-taskRunner.schedule(description, startTime, update);
-
-// Make name and fetch method available to the outside world
-module.exports = { name, update };

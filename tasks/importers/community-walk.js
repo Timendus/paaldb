@@ -1,19 +1,12 @@
-// Settings
-const name        = "CommunityWalk";
-const description = "Update map from CommunityWalk / Rugzaklopers";
-const serviceURL  = "http://www.communitywalk.com/xml/kml/14583";
-const startTime   = "02:00:00";
-
-// Dependencies
 const Request      = require('../../util/request');
-const taskRunner   = require('../../util/task-runner');
 const importHelper = require('../../util/import-helper');
-const {Mention}    = require('../../models');
 const convert      = require('xml-js');
+const {Mention}    = require('../../models');
 
 // Function to query the map
-const fetch = (now) => {
-  new Request(serviceURL).then((result) => {
+module.exports.run = () => {
+  return new Request("http://www.communitywalk.com/xml/kml/14583")
+  .then(result => {
 
     // Parse KML file
     result = convert.xml2js(result, {
@@ -25,7 +18,7 @@ const fetch = (now) => {
 
     // Collect source information
     const source = {
-      name:        name,
+      name:        "CommunityWalk",
       description: "Camping database met ondermeer campings welke bezocht zijn tijdens weekenden van de Vereniging de Rugzaklopers. Het doel van deze database is het verzamelen van campings waar mensen met trekkerstenten zich welkom voelen in de breedste zin van het woord, waar men kan kamperen op een bekende trektocht en/of men lekker in de natuur kan kamperen zonder gestoord te worden door een haag van witte dozen. Beheer door: Ondermeer een handjevol enthousiaste leden van de Vereniging de Rugzaklopers",
       contact:     "<a href='https://www.rugzaklopers.nl/contact/'>Contactformulier vereniging Rugzaklopers</a>"
     };
@@ -43,13 +36,11 @@ const fetch = (now) => {
     });
 
     // Save this data
-    importHelper.save(name, source, mentions);
+    return importHelper.save({
+      task: __filename,
+      source,
+      mentions
+    });
 
   });
 }
-
-// Schedule our task
-taskRunner.schedule(description, startTime, fetch);
-
-// Make name and fetch method available to the outside world
-module.exports = { name, fetch };

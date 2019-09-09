@@ -1,19 +1,12 @@
-// Settings
-const name        = "Kampeermeneer";
-const description = "Update paalkampeerplaatsen map from Kampeermeneer's website";
-const serviceURL  = "https://www.google.com/maps/d/kml?forcekml=1&mid=1OCxFeZMcMmjt_p-p0YV-aLR-pmrIxinB";
-const startTime   = "02:00:00";
-
-// Dependencies
 const Request      = require('../../util/request');
-const taskRunner   = require('../../util/task-runner');
 const importHelper = require('../../util/import-helper');
-const {Mention}    = require('../../models');
 const convert      = require('xml-js');
+const {Mention}    = require('../../models');
 
 // Function to query the map
-const fetch = (now) => {
-  new Request(serviceURL).then((result) => {
+module.exports.run = () => {
+  return new Request("https://www.google.com/maps/d/kml?forcekml=1&mid=1OCxFeZMcMmjt_p-p0YV-aLR-pmrIxinB")
+  .then(result => {
 
     // Parse KML file
     result = convert.xml2js(result, {
@@ -25,7 +18,7 @@ const fetch = (now) => {
 
     // Collect source information
     const source = {
-      name:        name,
+      name:        "Kampeermeneer",
       description: result.kml.Document.description._text,
       contact:     "<a href='https://www.kampeermeneer.nl/kampeerblog/'>Contactformulier Kampeermeneer</a>"
     };
@@ -42,13 +35,11 @@ const fetch = (now) => {
     });
 
     // Save this data
-    importHelper.save(name, source, mentions);
+    return importHelper.save({
+      task: __filename,
+      source,
+      mentions
+    });
 
   });
 }
-
-// Schedule our task
-taskRunner.schedule(description, startTime, fetch);
-
-// Make name and fetch method available to the outside world
-module.exports = { name, fetch };
