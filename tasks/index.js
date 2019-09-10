@@ -6,6 +6,13 @@ const { natuurbrandrisico,
         updateLocations,
         importers } = requireDir(__filename, __dirname);
 
+module.exports = {
+  natuurbrandrisico,
+  createAndLinkLocations,
+  updateLocations,
+  importers
+};
+
 module.exports.run = () => {
   return new Promise((resolve, reject) => {
 

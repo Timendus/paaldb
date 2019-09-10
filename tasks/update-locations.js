@@ -3,32 +3,49 @@ const Logger              = require('../util/logger');
 const {Location, Mention} = require('../models');
 
 // Function to update locations
-module.exports.run = () => {
-  Location.findAll({
+module.exports.run = async () => {
+  const locations = await Location.findAll({
     include: [{
       model: Mention
     }]
-  })
+  });
 
-  .then(locations => {
-    numChanged = 0;
+  numChanged = 0;
 
-    locations.forEach(location => {
-      if ( location.Mentions.length == 0 ) return;
+  for ( const location of locations ) {
+    if ( location.Mentions.length > 0 ) {
       location.name      = createName(location.Mentions.map(m => m.name));
       location.latitude  = average(location.Mentions.map(m => m.latitude));
       location.longitude = average(location.Mentions.map(m => m.longitude));
 
       // This is terribly sloppy, probably due to rounding of the coordinates
-      if ( location.changed() ) numChanged++;
-      location.save();
-    });
+      if ( location.changed() ) { numChanged++; /* console.log(location); */ }
+      await location.save();
+    }
+  }
 
-    Logger.log(`Updated fields on ${numChanged} locations`);
-  });
+  Logger.log(`Updated fields on ${numChanged} locations`);
 }
 
 function createName(names) {
+  // Strip common prefixes from all names
+  names = names.map(n =>
+    n.replace(new RegExp(`(${[
+      "Paal\\s",
+      "Paalkampeerplaats\\s",
+      "Paalcamping\\s",
+      "Aanlegplaats\\s",
+      "Aanlegplaatsen\\s",
+      "Aanlegsteiger\\s",
+      "Gastblog:\\s",
+      "Bivakzone\\s",
+      "Bivouac de\\s",
+      "Bivouac d\\'",
+      "Bivouac des\\s",
+      "Bivouac du\\s"
+    ].join('|')})`, 'gi'), '')
+  );
+
   // Create mapping lowercase name => actual name
   names = names.filter(n => n) // Exclude empty names
                .reduce((o,n) => {
@@ -55,5 +72,5 @@ function createName(names) {
 function average(values) {
   values = values.filter(n => n); // Exclude empty
   total = values.reduce((r,v) => r + v, 0);
-  return total / values.length;
+  return Math.round(total / values.length * 100000000) / 100000000;
 }

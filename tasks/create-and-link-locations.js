@@ -3,36 +3,26 @@ const Logger              = require('../util/logger');
 const {Location, Mention} = require('../models');
 
 // Function to create and link locations
-module.exports.run = () => {
-  return new Promise((resolve, reject) => {
-    const mp = Mention.findAll({
-      include: [{
-        model: Location
-      }]
-    });
-
-    const lp = Location.findAll();
-
-    Promise.all([mp, lp]).then(([mentions, locations]) => {
-      const {locationsToCreate, locationsToLink} = findLocations(locations, mentions);
-
-      console.log("Still here!");
-
-      createLocations(locationsToCreate).then(() => {
-        console.log("Not here anymore");
-        linkLocations(locationsToLink).then(() => {
-          console.log("And here");
-          Logger.log(`Created ${locationsToCreate.length} new locations and linked ${locationsToLink.length} locations to new mentions`);
-          resolve();
-        });
-      });
-    })
-
-    .catch(error => {
-      reject(error);
-    });
+module.exports.run = async () => {
+  const mentions = await Mention.findAll({
+    include: [{
+      model: Location
+    }]
   });
-}
+
+  const locations = await Location.findAll({
+    include: [{
+      model: Mention
+    }]
+  });
+
+  const {locationsToCreate, locationsToLink} = findLocations(locations, mentions);
+
+  await createLocations(locationsToCreate);
+  await linkLocations(locationsToLink);
+
+  Logger.log(`Created ${locationsToCreate.length} new locations and linked ${locationsToLink.length} locations to new mentions`);
+};
 
 function findLocations(locations, mentions) {
 
@@ -81,21 +71,15 @@ function findLocations(locations, mentions) {
   };
 }
 
-function createLocations(locations) {
-  return Promise.all(
-    locations.map(location => {
-      Location.create(location)
-      .then(record => {
-        record.setMentions(location.mentions);
-        return record.save();
-      });
-    })
-  );
+async function createLocations(locations) {
+  for ( const location of locations ) {
+    const record = await Location.create(location);
+    await record.setMentions(location.mentions);
+  }
 }
 
-function linkLocations(locations) {
-  return Promise.all(locations.map(location => {
-    location.setMentions(location.mentions);
-    return location.save();
-  }));
+async function linkLocations(locations) {
+  for ( const location of locations ) {
+    await location.setMentions(location.mentions);
+  }
 }

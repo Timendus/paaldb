@@ -45,16 +45,16 @@ module.exports = {
               }
             }).then(([mentionObj]) => {
 
+              // Register that this mention is (still) in the source
+              newMentions.push(mentionObj);
+
               // Update our mention information
               mentionObj.status      = mention.status || Mention.status.ACTIVE;
               mentionObj.description = mention.description;
               mentionObj.latitude    = mention.latitude;
               mentionObj.longitude   = mention.longitude;
               mentionObj.height      = mention.height;
-              mentionObj.save();
-
-              // Register that this mention is (still) in the source
-              newMentions.push(mentionObj);
+              return mentionObj.save();
             });
           });
 
