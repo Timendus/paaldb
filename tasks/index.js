@@ -13,36 +13,18 @@ module.exports = {
   importers
 };
 
-module.exports.run = () => {
-  return new Promise((resolve, reject) => {
+module.exports.run = async () => {
+  // First, run all impoters
+  await Promise.all(
+    Object.values(importers).map(i => i.run())
+  );
 
-    // First, run all impoters
-    Promise.all(
-      Object.values(importers).map(i => i.run())
-    )
+  // When all impoters are done, create and link locations
+  await createAndLinkLocations.run();
 
-    // When all impoters are done, create and link locations
-    .then(() => {
-      createAndLinkLocations.run()
-
-      // Then, run updateLocations and fetch the natuurbrandrisico's for each location
-      .then(() => {
-        Promise.all([
-          updateLocations.run(),
-          natuurbrandrisico.run()
-        ])
-
-        // And we're done
-        .then(() => resolve());
-      });
-    })
-
-    // What to do when things go wrong..?
-    .catch(error => {
-      Logger.error(`Woops, one of our tasks misbehaved! ${error}`);
-
-      // But the show must go on
-      resolve();
-    });
-  });
+  // Then, run updateLocations and fetch the natuurbrandrisico's for each location
+  await Promise.all([
+    updateLocations.run(),
+    natuurbrandrisico.run()
+  ]);
 }
