@@ -14,10 +14,10 @@ module.exports = {
         type: Sequelize.TEXT
       },
       latitude: {
-        type: Sequelize.FLOAT(11,8)
+        type: Sequelize.DECIMAL(11,8)
       },
       longitude: {
-        type: Sequelize.FLOAT(11,8)
+        type: Sequelize.DECIMAL(11,8)
       },
       height: {
         type: Sequelize.INTEGER

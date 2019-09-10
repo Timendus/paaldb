@@ -80,6 +80,8 @@ async function createLocations(locations) {
 
 async function linkLocations(locations) {
   for ( const location of locations ) {
-    await location.setMentions(location.mentions);
+    for ( const mention of location.mentions ) {
+      await mention.setLocation(location);
+    }
   }
 }

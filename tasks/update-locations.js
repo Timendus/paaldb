@@ -10,16 +10,15 @@ module.exports.run = async () => {
     }]
   });
 
-  numChanged = 0;
+  let numChanged = 0;
 
   for ( const location of locations ) {
     if ( location.Mentions.length > 0 ) {
       location.name      = createName(location.Mentions.map(m => m.name));
-      location.latitude  = average(location.Mentions.map(m => m.latitude));
-      location.longitude = average(location.Mentions.map(m => m.longitude));
+      location.latitude  = average(location.Mentions.map(m => m.latitude)).toFixed(8);
+      location.longitude = average(location.Mentions.map(m => m.longitude)).toFixed(8);
 
-      // This is terribly sloppy, probably due to rounding of the coordinates
-      if ( location.changed() ) { numChanged++; /* console.log(location); */ }
+      if ( location.changed() ) numChanged++;
       await location.save();
     }
   }
@@ -70,7 +69,8 @@ function createName(names) {
 }
 
 function average(values) {
-  values = values.filter(n => n); // Exclude empty
+  values = values.filter(n => n);  // Exclude empty
+  values = values.map(n => 1 * n); // Cast to numbers
   total = values.reduce((r,v) => r + v, 0);
   return Math.round(total / values.length * 100000000) / 100000000;
 }
