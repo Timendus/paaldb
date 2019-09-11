@@ -1,7 +1,8 @@
-const port = process.argv[2];
-const http = require('http');
-const Logger = require('./util/logger');
-
+const port       = process.argv[2];
+const http       = require('http');
+const Logger     = require('./util/logger');
+const taskRunner = require('./util/task-runner');
+const tasks      = require('./tasks');
 
 // Run server
 
@@ -14,6 +15,6 @@ const server = http.createServer((request, response) => {
 server.listen(port, () => Logger.log(`Server is listening on port ${port}`));
 
 
-// Run tasks
+// Run all tasks at 3 in the morning
 
-require('./tasks');
+taskRunner.schedule("running a full re-import", "03:00:00", tasks.run);
