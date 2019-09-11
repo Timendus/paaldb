@@ -1,18 +1,21 @@
 const port       = process.argv[2];
-const http       = require('http');
+const express    = require('express');
 const Logger     = require('./util/logger');
 const taskRunner = require('./util/task-runner');
 const tasks      = require('./tasks');
+const api        = require('./api');
+
 
 // Run server
 
-Logger.log(`Attempting to start server at port ${port}`);
+Logger.log(`Starting server at port ${port}`);
 
-const server = http.createServer((request, response) => {
-  Logger.log('Received request for ' + request.url);
-});
+const app = express();
+app.use(express.json());
+app.use('/api', api);
 
-server.listen(port, () => Logger.log(`Server is listening on port ${port}`));
+app.listen(port, () =>
+  Logger.log(`Server is listening on port ${port}`));
 
 
 // Run all tasks at 3 in the morning
