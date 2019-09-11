@@ -14,15 +14,13 @@ module.exports = {
 };
 
 module.exports.run = async () => {
-  // First, run all impoters
-  await Promise.all(
-    Object.values(importers).map(i => i.run())
-  );
+  // First, run all importers
+  await importers.run();
 
-  // When all impoters are done, create and link locations
+  // When all importers are done, create and link locations
   await createAndLinkLocations.run();
 
-  // Then, run updateLocations and fetch the natuurbrandrisico's for each location
+  // Then, run updateLocations and fetch the fire hazard statuses
   await Promise.all([
     updateLocations.run(),
     natuurbrandrisico.run()

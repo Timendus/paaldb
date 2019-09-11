@@ -21,7 +21,7 @@ module.exports.run = async () => {
   await createLocations(locationsToCreate);
   await linkLocations(locationsToLink);
 
-  Logger.log(`Created ${locationsToCreate.length} new locations and linked ${locationsToLink.length} locations to new mentions`);
+  Logger.log(`Created ${locationsToCreate.length} new location(s) and linked ${locationsToLink.length} location(s) to new mentions`);
 };
 
 function findLocations(locations, mentions) {

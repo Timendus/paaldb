@@ -23,7 +23,7 @@ module.exports.run = async () => {
     }
   }
 
-  Logger.log(`Updated fields on ${numChanged} locations`);
+  Logger.log(`Updated fields on ${numChanged} location(s)`);
 }
 
 function createName(names) {
