@@ -2,14 +2,14 @@
   "name": "paaldb",
   "version": "1.0.0",
   "description": "Collect information on paalkamperen from various sources, and make it easily available",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js $npm_package_config_port",
-    "import": "node import.js",
-    "dev": "nodemon index.js $npm_package_config_port"
-  },
   "author": "Tim Franssen",
   "license": "GPL-3.0-or-later",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=production node index.js $npm_package_config_port",
+    "import": "node import.js",
+    "dev": "NODE_ENV=development nodemon index.js $npm_package_config_port"
+  },
   "config": {
     "port": 9441
   },
