@@ -42,7 +42,8 @@ Location.init({
   name: Sequelize.STRING,
   description: Sequelize.STRING,
   latitude: Sequelize.FLOAT(11,8),
-  longitude: Sequelize.FLOAT(11,8)
+  longitude: Sequelize.FLOAT(11,8),
+  fireHazard: Sequelize.STRING
 }, {
   sequelize,
   modelName: 'Location'
@@ -51,5 +52,10 @@ Location.init({
 Location.beforeCreate((location, _) => {
   return location.id = uuid();
 });
+
+Location.fireHazard = {
+  NORMAL:  'Normaal',
+  HIGH:    'Verhoogd'
+};
 
 module.exports = Location;

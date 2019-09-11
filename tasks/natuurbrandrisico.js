@@ -1,4 +1,5 @@
 const Request        = require('../util/request');
+const Logger         = require('../util/logger');
 const pointInPolygon = require('robust-point-in-polygon');
 const {Location}     = require('../models');
 
@@ -13,15 +14,36 @@ module.exports.run = async () => {
   // Parse the rest
   result = JSON.parse(result);
 
+  // Bookkeeping
+  let numChanged = 0;
+  let matches    = 0;
+
   // Find the right region for each location
   for ( const l of locations ) {
     for ( const r of result ) {
 
       // Is our location in this region?
       if ( pointInPolygon(r.coords[0], [l.longitude, l.latitude]) < 1 ) {
-        console.log(`[${r.fase}] Location ${l.name} is in brandweer regio ${r.name}`);
+        // Store fire hazard status
+        switch(r.fase) {
+          case 'FASE_1':
+            l.fireHazard = Location.fireHazard.NORMAL;
+            break;
+          case 'FASE_2':
+            l.fireHazard = Location.fireHazard.HIGH;
+            break;
+          default:
+            l.fireHazard = null;
+            break;
+        }
+
+        matches++;
+        if ( l.changed() ) numChanged++;
+        await l.save();
       }
 
     }
   }
+
+  Logger.log(`Natuurbrandrisico.nl: Changed fire hazard status on ${numChanged}/${matches} location(s)`);
 }

@@ -19,6 +19,9 @@ module.exports = {
       longitude: {
         type: Sequelize.DECIMAL(11,8)
       },
+      fireHazard: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
