@@ -1,25 +1,33 @@
-// const { natuurbrandrisico,
-//         createAndLinkLocations,
-//         updateLocations,
-//         importers } = require('./tasks');
+/** Running individual tasks **/
 
 
-staatsbosbeheer = require('./tasks/importers/staatsbosbeheer');
-natuurbrandrisico = require('./tasks/natuurbrandrisico');
-wildKamperen = require('./tasks/importers/wild-kamperen');
+const { natuurbrandrisico,
+        createAndLinkLocations,
+        updateLocations,
+        importers } = require('./tasks');
 
-natuurbrandrisico.run().then(() => {
-  wildKamperen.run().then(() => {
-    console.log("All done!");
-  });
-});
+(async function() {
+  // await importers.stefanKruithof.run();
+  // await importers.natuurbrandrisico.run();
+  // await importers.kampeermeneer.run();
+  // await importers.communityWalk.run();
+  // await importers.stichtingWildkamperen.run();
+  // await importers.bivakzone.run();
 
-// importers.stefanKruithof.fetch(now);
-// importers.natuurbrandrisico.fetch(now);
-// importers.kampeermeneer.fetch(now);
-// importers.communityWalk.fetch(now);
-// importers.stichtingWildkamperen.fetch(now);
-// importers.bivakzone.fetch(now);
-//
-// setTimeout(() => createAndLinkLocations.update(now), 2000);
-// setTimeout(() => updateLocations.update(now), 4000);
+  await createAndLinkLocations.run();
+  await updateLocations.run();
+
+  // await natuurbrandrisico.run();
+
+  console.log("Done!");
+})();
+
+
+/** Running everything **/
+
+
+// tasks = require('./tasks');
+
+// tasks.run().then(() => {
+//   console.log('Done');
+// });
