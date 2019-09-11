@@ -4,7 +4,9 @@
   "description": "Collect information on paalkamperen from various sources, and make it easily available",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js $npm_package_config_port"
+    "start": "node index.js $npm_package_config_port",
+    "import": "node import.js",
+    "dev": "nodemon index.js $npm_package_config_port"
   },
   "author": "Tim Franssen",
   "license": "GPL-3.0-or-later",
@@ -20,6 +22,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
+    "nodemon": "^1.19.2",
     "sequelize-cli": "^5.5.0"
   }
 }
