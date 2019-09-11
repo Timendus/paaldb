@@ -10,13 +10,16 @@ const { natuurbrandrisico,
   // await importers.stefanKruithof.run();
   // await importers.natuurbrandrisico.run();
   // await importers.kampeermeneer.run();
+  // await importers.staatsbosbeheer.run();
   // await importers.communityWalk.run();
-  // await importers.stichtingWildkamperen.run();
+  // await importers.wildKamperen.run();
   // await importers.bivakzone.run();
-
-  await createAndLinkLocations.run();
-  await updateLocations.run();
-
+  //
+  // await importers.run();
+  //
+  // await createAndLinkLocations.run();
+  // await updateLocations.run();
+  //
   // await natuurbrandrisico.run();
 
   console.log("Done!");
@@ -27,7 +30,4 @@ const { natuurbrandrisico,
 
 
 // tasks = require('./tasks');
-
-// tasks.run().then(() => {
-//   console.log('Done');
-// });
+// tasks.run().then(() => console.log('Done'));
