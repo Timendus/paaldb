@@ -20,7 +20,8 @@
     "robust-point-in-polygon": "^1.0.3",
     "sequelize": "^5.17.2",
     "uuid": "^3.3.3",
-    "xml-js": "^1.6.11"
+    "xml-js": "^1.6.11",
+    "xss": "^1.0.6"
   },
   "devDependencies": {
     "nodemon": "^1.19.2",

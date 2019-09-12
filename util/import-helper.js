@@ -1,4 +1,5 @@
 const {Source, Mention} = require('../models');
+const safeHTML          = require("./safe-html");
 const Logger            = require('./logger');
 const path              = require('path');
 
@@ -16,14 +17,14 @@ module.exports = {
 
       // Find or create our source in the database
       Source.findOrCreate({
-        where: { name: source.name }
+        where: { name: safeHTML.parse(source.name) }
       })
 
       .then(([sourceObj]) => {
 
         // Update our source information
-        sourceObj.description = source.description;
-        sourceObj.contact     = source.contact;
+        sourceObj.description = safeHTML.parse(source.description);
+        sourceObj.contact     = safeHTML.parse(source.contact);
         sourceObj.save();
 
         // Keep track of old and new mentions, wait for result
@@ -40,7 +41,7 @@ module.exports = {
             // Find or create our mention in the database
             return Mention.findOrCreate({
               where: {
-                name: mention.name,
+                name: safeHTML.parse(mention.name),
                 SourceId: sourceObj.id
               }
             }).then(([mentionObj]) => {
@@ -50,10 +51,10 @@ module.exports = {
 
               // Update our mention information
               mentionObj.status      = mention.status || Mention.status.ACTIVE;
-              mentionObj.description = mention.description;
-              mentionObj.latitude    = mention.latitude;
-              mentionObj.longitude   = mention.longitude;
-              mentionObj.height      = mention.height;
+              mentionObj.description = safeHTML.parse(mention.description);
+              mentionObj.latitude    = safeHTML.parse(mention.latitude);
+              mentionObj.longitude   = safeHTML.parse(mention.longitude);
+              mentionObj.height      = safeHTML.parse(mention.height);
               return mentionObj.save();
             });
           });
