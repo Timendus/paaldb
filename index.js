@@ -11,6 +11,12 @@ const api        = require('./api');
 Logger.log(`Starting server at port ${port}`);
 
 const app = express();
+
+app.use('/', (req, res, next) => {
+  Logger.log(`Received request for ${req.url}`, req.headers['x-forwarded-for'] || req.connection.remoteAddress);
+  next();
+});
+
 app.use(express.json());
 app.use('/api', api);
 
