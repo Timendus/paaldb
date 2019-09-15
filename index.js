@@ -4,6 +4,7 @@ const Logger     = require('./util/logger');
 const taskRunner = require('./util/task-runner');
 const tasks      = require('./tasks');
 const api        = require('./api');
+const exporters  = require('./export');
 
 
 // Run server
@@ -19,6 +20,7 @@ app.use('/', (req, res, next) => {
 
 app.use(express.json());
 app.use('/api', api);
+app.use('/export', exporters);
 
 app.listen(port, () =>
   Logger.log(`Server is listening on port ${port}`));
