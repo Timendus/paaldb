@@ -1,15 +1,20 @@
 const {Source, Mention} = require('../models');
 const safeHTML          = require("./safe-html");
 const Logger            = require('./logger');
+const roundCoordinate   = require('./round-coordinate');
 const path              = require('path');
+const proj4             = require('proj4');
+
+proj4.defs("EPSG:25832","+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
 module.exports = {
 
-  save: ({task, source, mentions}) => {
+  save: ({task, source, mentions, projection}) => {
     return new Promise((resolve, reject) => {
 
       // We don't need the whole path
       task = path.basename(task);
+      projection = projection || 'WGS84';
 
       // If no data, assume task or remote source is broken and don't touch the database
       if ( !source.name || !source.description || !source.contact || mentions.length == 0 )
@@ -27,8 +32,10 @@ module.exports = {
         sourceObj.contact     = safeHTML.parse(source.contact);
         sourceObj.save();
 
-        // Keep track of old and new mentions, wait for result
+        // Bookkeeping
         const newMentions = [];
+        let numChanged = 0;
+
         sourceObj.getMentions().then((oldMentions) => {
 
           // Collect all promises so we can wait for them later
@@ -49,12 +56,21 @@ module.exports = {
               // Register that this mention is (still) in the source
               newMentions.push(mentionObj);
 
+              // Project the coordinates to the right coordinate system
+              const coordinates = proj4(projection, 'WGS84', {
+                x: 1 * mention.longitude,
+                y: 1 * mention.latitude,
+                z: 1 * mention.height
+              });
+
               // Update our mention information
               mentionObj.status      = mention.status || Mention.status.ACTIVE;
               mentionObj.description = safeHTML.parse(mention.description);
-              mentionObj.latitude    = safeHTML.parse(mention.latitude);
-              mentionObj.longitude   = safeHTML.parse(mention.longitude);
-              mentionObj.height      = safeHTML.parse(mention.height);
+              mentionObj.longitude   = roundCoordinate(coordinates.x);
+              mentionObj.latitude    = roundCoordinate(coordinates.y);
+              mentionObj.height      = coordinates.z || 0;
+
+              if ( mentionObj.changed() ) numChanged++;
               return mentionObj.save();
             });
           });
@@ -71,6 +87,7 @@ module.exports = {
             })).then(() => {
               Logger.log(`Task ${task}: Newly created mentions (${created.length}): [${created.map(c => c.name).join(',')}]`);
               Logger.log(`Task ${task}: Mentions marked as stale (${stale.length}): [${stale.map(c => c.name).join(',')}]`);
+              Logger.log(`Task ${task}: Otherwise, updated ${numChanged} mentions`);
               resolve();
             });
           });

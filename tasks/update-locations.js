@@ -1,5 +1,6 @@
 const taskRunner          = require('../util/task-runner');
 const Logger              = require('../util/logger');
+const roundCoordinate     = require('../util/round-coordinate');
 const {Location, Mention} = require('../models');
 
 // Function to update locations
@@ -15,8 +16,8 @@ module.exports.run = async () => {
   for ( const location of locations ) {
     if ( location.Mentions.length > 0 ) {
       location.name      = createName(location.Mentions.map(m => m.name));
-      location.latitude  = average(location.Mentions.map(m => m.latitude)).toFixed(8);
-      location.longitude = average(location.Mentions.map(m => m.longitude)).toFixed(8);
+      location.latitude  = average(location.Mentions.map(m => m.latitude));
+      location.longitude = average(location.Mentions.map(m => m.longitude));
 
       if ( location.changed() ) numChanged++;
       await location.save();
@@ -72,5 +73,5 @@ function average(values) {
   values = values.filter(n => n);  // Exclude empty
   values = values.map(n => 1 * n); // Cast to numbers
   total = values.reduce((r,v) => r + v, 0);
-  return Math.round(total / values.length * 100000000) / 100000000;
+  return roundCoordinate(total / values.length);
 }

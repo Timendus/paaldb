@@ -1,7 +1,6 @@
 const Request      = require('../../util/request');
 const importHelper = require('../../util/import-helper');
 const convert      = require('xml-js');
-const {Mention}    = require('../../models');
 
 // Function to query the map
 module.exports.run = async () => {
