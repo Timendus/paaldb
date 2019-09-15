@@ -7,13 +7,14 @@ const { natuurbrandrisico,
         importers } = require('./tasks');
 
 (async function() {
-  // await importers.stefanKruithof.run();
-  // await importers.natuurbrandrisico.run();
+  // await importers.bivakzone.run();
+  // await importers.communityWalk.run();
   // await importers.kampeermeneer.run();
   // await importers.staatsbosbeheer.run();
-  // await importers.communityWalk.run();
+  // await importers.stefanKruithof.run();
+  // await importers.udinaturen.run();
+  // await importers.vindskyddskartan.run();
   // await importers.wildKamperen.run();
-  // await importers.bivakzone.run();
   //
   // await importers.run();
   //
