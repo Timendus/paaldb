@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
     res.json(locations);
   } catch(err) {
     Logger.error(err);
-    res.status(500).json({ message: 'An error occured trying to find your locations' });
+    res.status(500).end();
   }
 });
 
@@ -50,11 +50,11 @@ async function getLocation(req, res, next) {
       ]
     });
     if ( !req.location ) {
-      return res.status(404).json({ message: 'Unknown location requested' });
+      return res.status(404).end();
     }
   } catch(err) {
     Logger.error(err);
-    return res.status(500).json({ message: 'An error occured trying to find your location' });
+    return res.status(500).end();
   }
 
   next();

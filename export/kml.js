@@ -51,13 +51,18 @@ router.get('/', async (req, res) => {
       }
     }
 
-    res.send(convert.js2xml(xml, {
-      spaces: 2,
-      compact: true
-    }));
+    res.set("Content-Disposition", "attachment;filename=paaldb.kml");
+    res.set("Content-Type", "application/vnd.google-earth.kml+xml");
+
+    res.send(
+      convert.js2xml(xml, {
+        spaces: 2,
+        compact: true
+      })
+    );
   } catch(err) {
     Logger.error(err);
-    res.status(500).send('An error occured trying to find your locations');
+    res.status(500).end();
   }
 });
 
