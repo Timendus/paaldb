@@ -1,26 +1,12 @@
-const router               = require('express').Router();
-const Logger               = require('../util/logger');
-const {Location, Mention}  = require('../models');
-const {Sequelize}          = require('../util/database');
+const router          = require('express').Router();
+const Logger          = require('../util/logger');
+const locationService = require('../services/location');
 
 // GET /api/locations => List of all locations
 
 router.get('/', async (req, res) => {
   try {
-    const locations = await Location.findAll({
-      attributes: {
-        include: [
-          [ Sequelize.fn('COUNT', Sequelize.col('Mentions.id')), 'numberOfMentions' ]
-        ]
-      },
-      include: [
-        {
-          model: Mention,
-          attributes: []
-        }
-      ],
-      group: [ 'Location.id' ]
-    });
+    const locations = await locationService.findAll();
     res.json(locations);
   } catch(err) {
     Logger.error(err);
@@ -38,17 +24,7 @@ router.get('/:id', getLocation, async (req, res) => {
 
 async function getLocation(req, res, next) {
   try {
-    req.location = await Location.findOne({
-      where: {
-        id: req.params.id
-      },
-      include: [
-        {
-          all: true,
-          nested: true
-        }
-      ]
-    });
+    req.location = await locationService.findOne(req.params.id);
     if ( !req.location ) {
       return res.status(404).end();
     }

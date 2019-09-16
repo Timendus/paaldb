@@ -1,27 +1,13 @@
-const router              = require('express').Router();
-const Logger              = require('../util/logger');
-const {Location, Mention} = require('../models');
-const {Sequelize}         = require('../util/database');
-const convert             = require('xml-js');
+const router          = require('express').Router();
+const Logger          = require('../util/logger');
+const locationService = require('../services/location');
+const convert         = require('xml-js');
 
 // GET /export/kml => Get KML file of all locations
 
 router.get('/', async (req, res) => {
   try {
-    const locations = await Location.findAll({
-      attributes: {
-        include: [
-          [ Sequelize.fn('COUNT', Sequelize.col('Mentions.id')), 'numberOfMentions' ]
-        ]
-      },
-      include: [
-        {
-          model: Mention,
-          attributes: []
-        }
-      ],
-      group: [ 'Location.id' ]
-    });
+    const locations = await locationService.findAll();
 
     const xml = {
       _declaration: {
