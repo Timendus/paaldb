@@ -1,6 +1,6 @@
 window.addEventListener('load', async () => {
   const mymap = L.map('map')
-                 .setView([52.232947, 5.697784], 8);
+                 .setView([52.232947, 5.697784], 7);
 
   const tileLayer = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}@2x?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -27,13 +27,22 @@ window.addEventListener('load', async () => {
     document.getElementById('location').classList.remove('active');
   });
 
-  // Show location popup when we click a location pin
+  // Render locations
+  // Show location popup when we click a location
+
+  const canvasLayer = L.canvas({ padding: 0.5 });
   const locations = JSON.parse(await request('/api/locations'));
+
   for ( const location of locations ) {
-    L.marker([location.latitude, location.longitude], {
-      title:   location.name,
-      alt:     location.name,
-      opacity: (Math.min(3, location.numberOfMentions)/3)
+    L.circleMarker([location.latitude, location.longitude], {
+      renderer:    canvasLayer,
+      radius:      15,
+      weight:      5,
+      opacity:     1,
+      fillOpacity: (Math.min(3, location.numberOfMentions)/3),
+      color:       '#108',
+      fillColor:   '#20a'
+
     })
     .addTo(mymap)
     .on('click', () => {
