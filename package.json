@@ -6,7 +6,7 @@
   "license": "GPL-3.0-or-later",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production node index.js $npm_package_config_port",
+    "start": "NODE_ENV=production nodemon index.js $npm_package_config_port",
     "import": "node import.js",
     "dev": "NODE_ENV=development nodemon index.js $npm_package_config_port"
   },
