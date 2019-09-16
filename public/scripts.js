@@ -22,16 +22,12 @@ window.addEventListener('load', async () => {
     }
   });
 
-  // Hide location popup when we click the map
-  mymap.on('click', () => {
-    document.getElementById('location').classList.remove('active');
-  });
-
   // Render locations
   // Show location popup when we click a location
 
   const canvasLayer = L.canvas({ padding: 0.5 });
   const locations = JSON.parse(await request('/api/locations'));
+  let activeLocation = null;
 
   for ( const location of locations ) {
     L.circleMarker([location.latitude, location.longitude], {
@@ -45,67 +41,92 @@ window.addEventListener('load', async () => {
 
     })
     .addTo(mymap)
-    .on('click', () => {
-      showDetails(location);
+    .on('click', (event) => {
+      showDetails(location, event.target);
     });
   }
-});
 
-function request(url) {
-  return new Promise((resolve, reject) => {
-    const httpRequest = new XMLHttpRequest()
-    httpRequest.addEventListener('readystatechange', (event) => {
-      if ( httpRequest.readyState !== XMLHttpRequest.DONE ) return;
-      if ( httpRequest.status !== 200 ) return reject("Received an error from the back-end");
-      resolve(httpRequest.responseText);
+  // Hide location popup when we click the map
+  mymap.on('click', hideDetails);
+
+
+  async function showDetails(location, marker) {
+    const details = JSON.parse(await request(`/api/locations/${location.id}`));
+
+    document.getElementById('location').innerHTML = `
+      <h1>${location.name}</h1>
+
+      ${ location.description ? `
+        <section class='description'>
+          ${location.description}
+        </section>
+      ` : '' }
+
+      ${ location.fireHazard  ? `
+        <section class='fireHazard'>
+          <p>Brandrisico: <b>${location.fireHazard}</b></p>
+        </section>
+      ` : '' }
+
+      <section class='mentions'>
+        <p>Deze locatie wordt vermeld door:</p>
+        <ul>
+          ${
+            details.Mentions.map(m => {
+              return `
+                <li>
+                  <details>
+                    <summary><b>${m.Source.name}</b> - ${m.status}</summary>
+                    <h2>${m.name}</h2>
+                    ${ m.description ? `
+                      <section class='description'>
+                        ${m.description}
+                      </section>
+                    ` : '' }
+                  </details>
+                </li>
+              `;
+            }).join('')
+          }
+        </ul>
+      </section>
+    `;
+
+    // Make currently selected location red
+    activeLocation = marker;
+    activeLocation.options.color     = '#801';
+    activeLocation.options.fillColor = '#a02';
+    activeLocation.redraw();
+
+    document.getElementById('location').classList.add('active');
+  }
+
+  function hideDetails() {
+    // Make previously selected location blue again
+    if ( activeLocation ) {
+      activeLocation.options.color     = '#108';
+      activeLocation.options.fillColor = '#20a';
+      activeLocation.redraw();
+    }
+
+    // Hide location details
+    document.getElementById('location').classList.remove('active');
+  }
+
+  // Do a GET request to somewhere, wrapped in a Promise
+
+  function request(url) {
+    return new Promise((resolve, reject) => {
+      const httpRequest = new XMLHttpRequest()
+      httpRequest.addEventListener('readystatechange', (event) => {
+        if ( httpRequest.readyState !== XMLHttpRequest.DONE ) return;
+        if ( httpRequest.status !== 200 ) return reject("Received an error from the back-end");
+        resolve(httpRequest.responseText);
+      });
+
+      httpRequest.open('GET', url);
+      httpRequest.send();
     });
+  }
 
-    httpRequest.open('GET', url);
-    httpRequest.send();
-  });
-}
-
-async function showDetails(location) {
-  const details = JSON.parse(await request(`/api/locations/${location.id}`));
-
-  document.getElementById('location').innerHTML = `
-    <h1>${location.name}</h1>
-
-    ${ location.description ? `
-      <section class='description'>
-        ${location.description}
-      </section>
-    ` : '' }
-
-    ${ location.fireHazard  ? `
-      <section class='fireHazard'>
-        <p>Brandrisico: <b>${location.fireHazard}</b></p>
-      </section>
-    ` : '' }
-
-    <section class='mentions'>
-      <p>Deze locatie wordt vermeld door:</p>
-      <ul>
-        ${
-          details.Mentions.map(m => {
-            return `
-              <li>
-                <details>
-                  <summary><b>${m.Source.name}</b> - ${m.status}</summary>
-                  <h2>${m.name}</h2>
-                  ${ m.description ? `
-                    <section class='description'>
-                      ${m.description}
-                    </section>
-                  ` : '' }
-                </details>
-              </li>
-            `;
-          }).join('')
-        }
-      </ul>
-    </section>
-  `;
-
-  document.getElementById('location').classList.add('active');
-}
+});
