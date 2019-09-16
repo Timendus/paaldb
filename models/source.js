@@ -9,7 +9,8 @@ Source.init({
   contact: Sequelize.STRING
 }, {
   sequelize,
-  modelName: 'Source'
+  modelName: 'Source',
+  charset: 'utf8mb4'
 });
 
 Source.beforeCreate((location, _) => {
