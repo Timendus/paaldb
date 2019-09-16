@@ -4,7 +4,7 @@ const tasks  = [];
 setInterval(() => {
   const now = new Date();
   tasks.forEach((t) => {
-    if ( t[1] == now.toLocaleTimeString('nl-NL') ) {
+    if ( t[1] == now.toLocaleTimeString('nl-NL', { hour12: false }) ) {
       Logger.log(`Running scheduled task for '${t[0]}'`);
       t[2](now);
     }
