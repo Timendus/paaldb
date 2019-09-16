@@ -15,7 +15,8 @@ Mention.init({
   status: Sequelize.STRING
 }, {
   sequelize,
-  modelName: 'Mention'
+  modelName: 'Mention',
+  charset: 'utf8mb4'
 });
 
 Mention.beforeCreate((mention, _) => {

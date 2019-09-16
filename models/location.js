@@ -46,7 +46,8 @@ Location.init({
   fireHazard: Sequelize.STRING
 }, {
   sequelize,
-  modelName: 'Location'
+  modelName: 'Location',
+  charset: 'utf8mb4'
 });
 
 Location.beforeCreate((location, _) => {
