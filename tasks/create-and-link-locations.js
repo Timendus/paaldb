@@ -50,7 +50,7 @@ function findLocations(locations, mentions) {
     // Is the location close enough? Then link it
     if (
       location && (
-        location.distance < 0.001 ||                    // Location is spot on
+        location.distance < 0.002 ||                    // Location is spot on
         (
           similarNames(location.name, mention.name) &&  // Location is near, and has "the same name"
           location.distance < 0.005
