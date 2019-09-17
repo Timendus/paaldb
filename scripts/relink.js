@@ -14,14 +14,23 @@ const { natuurbrandrisico,
     await mention.setLocation(null);
   }
 
-  Logger.log("Relink: Removing all Locations");
-
-  await Location.destroy({ where: {} });
-
-  Logger.log("Relink: Creating and linking new locations");
+  Logger.log("Relink: Relinking mentions to locations according to new logic");
 
   await createAndLinkLocations.run();
   await updateLocations.run();
+
+  Logger.log("Relink: Regrouping may have moved locations. Creating and linking new locations once more");
+
+  mentions = await Mention.findAll();
+  for ( const mention of mentions ) {
+    await mention.setLocation(null);
+  }
+
+  await createAndLinkLocations.run();
+  await updateLocations.run();
+
+  Logger.log("Relink: Done relinking, I hope. Updating fire hazard status");
+
   await natuurbrandrisico.run();
 
   Logger.log("Relinking done. You can now safely exit this process (Ctrl+C)");
