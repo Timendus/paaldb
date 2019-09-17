@@ -29,4 +29,4 @@ app.listen(config.port, () =>
 
 // Run all tasks at 3 in the morning
 
-taskRunner.schedule("running a full re-import", "03:00:00", tasks.run);
+taskRunner.schedule("Running all tasks", "03:00:00", tasks.run);
