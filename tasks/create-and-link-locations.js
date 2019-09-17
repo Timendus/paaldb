@@ -1,6 +1,7 @@
 const taskRunner          = require('../util/task-runner');
 const Logger              = require('../util/logger');
 const {Location, Mention} = require('../models');
+const locationService     = require('../services/location');
 
 // Function to create and link locations
 module.exports.run = async () => {
@@ -39,14 +40,14 @@ function findLocations(locations, mentions) {
     if ( mention.Location ) return;
 
     // Otherwise, find the closest location to this mention
-    const location = Location.findNearestInMemory({
+    const location = locationService.findNearestInMemory({
       locations: locations.concat(locationsToCreate),
       latitude:  mention.latitude,
       longitude: mention.longitude
     });
 
     // Is the location close enough? Then link it
-    if ( location && location.distance < 0.005 ) {
+    if ( location && location.distance < 0.001 ) {
       location.mentions.push(mention);
 
       if ( location.id )

@@ -30,6 +30,41 @@ module.exports = {
         }
       ]
     });
+  },
+
+  // Note: Returns a Location object
+  findNearestInMemory: ({locations, latitude, longitude}) => {
+    return locations
+    .map(l => {
+      l.distance = Math.sqrt(
+        Math.pow(l.latitude - latitude, 2) +
+        Math.pow(l.longitude - longitude, 2)
+      );
+      return l;
+    })
+    .sort((l1, l2) => l1.distance - l2.distance)
+    .shift();
+  },
+
+  // Note: Returns a Promise
+  findNearestInDatabase: ({latitude, longitude}) => {
+    return Location.findAll({
+      attributes: {
+        include: [
+          [
+            sequelize.fn(
+              'sqrt',
+              sequelize.literal(`POW(latitude - ${latitude}, 2) + POW(longitude - ${longitude}, 2)`)
+            ),
+            'distance'
+          ]
+        ]
+      },
+      order: [
+        [sequelize.col('distance'), 'ASC']
+      ],
+      limit: 1
+    });
   }
 
 };
