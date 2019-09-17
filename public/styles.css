@@ -17,7 +17,6 @@ html, body {
 }
 
 #location {
-  display: none;
   position: absolute;
   bottom: 0;
   left: 25vw;
@@ -29,12 +28,19 @@ html, body {
   overflow-y: scroll;
   overflow-wrap: break-word;
 
-  background-color: #ECECFB;
+  background-color: rgba(0, 0, 0, 0.8);
   border-top-left-radius: 1vw;
   border-top-right-radius: 1vw;
+
+  font-family: Tahoma, Arial, sans-serif;
+  font-size: 0.8em;
+  color: rgb(230,230,230);
+
+  transition: transform 0.2s ease;
+  transform: translateY(100%);
 }
 #location.active {
-  display: block;
+  transform: translateY(0%);
 }
 #location ul {
   list-style-type: none;
@@ -42,10 +48,37 @@ html, body {
 #location img {
   max-width: 100%;
 }
-@media screen and (max-width: 1024px) {
+#location a {
+  color: rgb(230,230,230);
+}
+@media screen and (max-width: 768px) {
   #location {
     left: 0;
     width: 100vw;
+  }
+}
+
+#location.loading {
+  height: 140px;
+  text-align: center;
+}
+#location.loading:after {
+  content: '';
+  display: block;
+  width: 46px;
+  height: 46px;
+  margin: 1em auto;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  border-color: rgb(230,230,230) transparent rgb(230,230,230) transparent;
+  animation: waiting-animation 1.2s linear infinite;
+}
+@keyframes waiting-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 

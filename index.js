@@ -1,5 +1,5 @@
-const port       = process.argv[2];
 const express    = require('express');
+const config     = require('./util/config')['server'];
 const Logger     = require('./util/logger');
 const taskRunner = require('./util/task-runner');
 const tasks      = require('./tasks');
@@ -9,7 +9,7 @@ const exporters  = require('./export');
 
 // Run server
 
-Logger.log(`Starting server at port ${port}`);
+Logger.log(`Starting server at port ${config.port}`);
 
 const app = express();
 
@@ -23,8 +23,8 @@ app.use(express.json());
 app.use('/api', api);
 app.use('/export', exporters);
 
-app.listen(port, () =>
-  Logger.log(`Server is listening on port ${port}`));
+app.listen(config.port, () =>
+  Logger.log(`Server is listening on port ${config.port}`));
 
 
 // Run all tasks at 3 in the morning
