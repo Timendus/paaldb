@@ -6,9 +6,11 @@
   "license": "GPL-3.0-or-later",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production nodemon index.js",
-    "import": "node import.js",
-    "dev": "NODE_ENV=development nodemon index.js"
+    "start":  "NODE_ENV=production nodemon index.js",
+    "dev":    "NODE_ENV=development nodemon index.js",
+    "import": "node scripts/import.js",
+    "relink": "node scripts/relink.js",
+    "test":   "node scripts/test.js"
   },
   "dependencies": {
     "express": "^4.17.1",
