@@ -1,7 +1,8 @@
 const Logger              = require('../util/logger');
 const {Location, Mention} = require('../models');
 
-const { createAndLinkLocations,
+const { natuurbrandrisico,
+        createAndLinkLocations,
         updateLocations } = require('../tasks');
 
 (async function() {
