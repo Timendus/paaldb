@@ -1,5 +1,6 @@
 const taskRunner          = require('../util/task-runner');
 const Logger              = require('../util/logger');
+const string              = require('../util/string');
 const {Location, Mention} = require('../models');
 const locationService     = require('../services/location');
 
@@ -47,7 +48,13 @@ function findLocations(locations, mentions) {
     });
 
     // Is the location close enough? Then link it
-    if ( location && location.distance < 0.001 ) {
+    if (
+      location && (
+        location.distance < 0.001 ||                  // Location is spot on
+        similarNames(location.name, mention.name) &&
+          location.distance < 0.005                   // Location is near, and has "the same name"
+      )
+    ) {
       location.mentions.push(mention);
 
       if ( location.id )
@@ -85,4 +92,17 @@ async function linkLocations(locations) {
       await mention.setLocation(location);
     }
   }
+}
+
+function similarNames(name1, name2) {
+  name1 = string.stripName(name1).toLowerCase();
+  name2 = string.stripName(name2).toLowerCase();
+
+  // Are the names the same?
+  if ( name1 == name2 ) return true;
+
+  // Does one of the names contain the other?
+  if ( name1.includes(name2) || name2.includes(name1) ) return true;
+
+  return false;
 }

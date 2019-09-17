@@ -8,6 +8,23 @@ module.exports = {
 
   capitalize: (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
+  },
+
+  stripName: (name) => {
+    return name.replace(new RegExp(`(${[
+      "Paal\\s",
+      "Paalkampeerplaats\\s",
+      "Paalcamping\\s",
+      "Aanlegplaats\\s",
+      "Aanlegplaatsen\\s",
+      "Aanlegsteiger\\s",
+      "Gastblog:\\s",
+      "Bivakzone\\s",
+      "Bivouac de\\s",
+      "Bivouac d\\'",
+      "Bivouac des\\s",
+      "Bivouac du\\s"
+    ].join('|')})`, 'gi'), '');
   }
 
 }

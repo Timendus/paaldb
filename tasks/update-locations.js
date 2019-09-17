@@ -1,6 +1,7 @@
 const taskRunner          = require('../util/task-runner');
 const Logger              = require('../util/logger');
 const roundCoordinate     = require('../util/round-coordinate');
+const string              = require('../util/string');
 const {Location, Mention} = require('../models');
 
 // Function to update locations
@@ -29,22 +30,7 @@ module.exports.run = async () => {
 
 function createName(names) {
   // Strip common prefixes from all names
-  names = names.map(n =>
-    n.replace(new RegExp(`(${[
-      "Paal\\s",
-      "Paalkampeerplaats\\s",
-      "Paalcamping\\s",
-      "Aanlegplaats\\s",
-      "Aanlegplaatsen\\s",
-      "Aanlegsteiger\\s",
-      "Gastblog:\\s",
-      "Bivakzone\\s",
-      "Bivouac de\\s",
-      "Bivouac d\\'",
-      "Bivouac des\\s",
-      "Bivouac du\\s"
-    ].join('|')})`, 'gi'), '')
-  );
+  names = names.map(n => string.stripName(n));
 
   // Create mapping lowercase name => actual name
   names = names.filter(n => n) // Exclude empty names
