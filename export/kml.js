@@ -4,7 +4,6 @@ const locationService = require('../services/location');
 const convert         = require('xml-js');
 
 // GET /export/kml => Get KML file of all locations
-
 router.get('/', async (req, res) => {
   try {
     const locations = await locationService.findAll();
@@ -19,10 +18,10 @@ router.get('/', async (req, res) => {
       kml: {
         _attributes: { xmlns: "http://www.opengis.net/kml/2.2" },
         Document: {
-          name: { _text: 'PaalDB export' },
-          description: { _text: 'Dingen' },
+          name: { _text: 'PaalDB KML export' },
+          description: { _text: 'Een slimme database met paalkampeerlocaties (en vergelijkbare plekken in het buitenland). Zie https://github.com/Timendus/paaldb/wiki voor meer informatie.' },
           Folder: {
-            name: { _text: 'Layer name here' },
+            name: { _text: 'Locaties' },
             Placemark: locations.map(l => {
               return {
                 name: { _text: l.name },

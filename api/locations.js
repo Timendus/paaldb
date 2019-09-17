@@ -3,11 +3,9 @@ const Logger          = require('../util/logger');
 const locationService = require('../services/location');
 
 // GET /api/locations => List of all locations
-
 router.get('/', async (req, res) => {
   try {
-    const locations = await locationService.findAll();
-    res.json(locations);
+    res.json(await locationService.findAll());
   } catch(err) {
     Logger.error(err);
     res.status(500).end();
@@ -15,13 +13,11 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/locations/:id => Get this location including mentions and sources
-
 router.get('/:id', getLocation, async (req, res) => {
   res.json(req.location);
 });
 
 // Helper middleware
-
 async function getLocation(req, res, next) {
   try {
     req.location = await locationService.findOne(req.params.id);

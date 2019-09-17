@@ -4,7 +4,6 @@ const locationService = require('../services/location');
 const convert         = require('xml-js');
 
 // GET /export/gpx => Get GPX file of all locations
-
 router.get('/', async (req, res) => {
   try {
     const locations = await locationService.findAll();
@@ -19,7 +18,7 @@ router.get('/', async (req, res) => {
       gpx: {
         _attributes: {
           version: "1.1",
-          creator: "PaalDB",
+          creator: "PaalDB GPX export",
           xmlns: "http://www.topografix.com/GPX/1/1",
           "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
           "xsi:schemaLocation": "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
