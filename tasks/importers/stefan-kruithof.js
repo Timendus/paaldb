@@ -31,7 +31,7 @@ module.exports.run = async () => {
       latitude:    lat,
       longitude:   lon,
       status:      p.styleUrl._text == '#icon-1125' ? Mention.status.STALE : Mention.status.ACTIVE,
-      description: p.description._cdata,
+      description: p.description ? p.description._cdata : null,
 
       properties: {
         hasShelter: p.styleUrl._text == '#icon-117'
