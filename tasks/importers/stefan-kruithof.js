@@ -26,15 +26,16 @@ module.exports.run = async () => {
   const mentions = result.kml.Document.Folder.Placemark.map((p) => {
     const [lon, lat] = p.Point.coordinates._text.split(',');
 
-    // Stefan uses different icons to indicate different locations
-    const stale   = p.styleUrl._text == '#icon-1125';
-    const shelter = p.styleUrl._text == '#icon-117';
-
     return {
       name:        p.name._text,
       latitude:    lat,
       longitude:   lon,
-      status:      stale ? Mention.status.STALE : Mention.status.ACTIVE
+      status:      p.styleUrl._text == '#icon-1125' ? Mention.status.STALE : Mention.status.ACTIVE,
+      description: p.description._cdata,
+
+      properties: {
+        hasShelter: p.styleUrl._text == '#icon-117'
+      }
     }
   });
 

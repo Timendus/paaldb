@@ -36,8 +36,8 @@ module.exports.run = async () => {
       description: p.description ? (p.description._cdata || p.description._text) : '',
 
       properties: {
-        hasShelter:    p.styleUrl._text == '#icon-1197',
-        isUnconfirmed: p.styleUrl._text == '#icon-503-DB4436-nodesc'
+        hasShelter: p.styleUrl._text == '#icon-1197'
+        // isUnconfirmed: p.styleUrl._text == '#icon-503-DB4436-nodesc'
       }
     }
   });

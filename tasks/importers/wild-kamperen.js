@@ -26,16 +26,16 @@ module.exports.run = async () => {
   const mentions = result.kml.Document.Folder.Placemark.map(p => {
     const [lon, lat] = p.Point.coordinates._text.split(',');
 
-    // wild-kamperen.nl uses different icons to indicate different locations
-    const stale   = p.styleUrl._text == '#blank_red';
-    const shelter = p.styleUrl._text == '#home';
-
     return {
       name:        p.name._text,
       latitude:    lat,
       longitude:   lon,
-      status:      stale ? Mention.status.STALE : Mention.status.ACTIVE,
-      description: p.description._cdata
+      status:      p.styleUrl._text == '#blank_red' ? Mention.status.STALE : Mention.status.ACTIVE,
+      description: p.description._cdata,
+
+      properties: {
+        hasShelter: p.styleUrl._text == '#home'
+      }
     }
   });
 
