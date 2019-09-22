@@ -13,8 +13,8 @@ Source.init({
   charset: 'utf8mb4'
 });
 
-Source.beforeCreate((location, _) => {
-  return location.id = uuid();
+Source.beforeCreate((source, _) => {
+  return source.id = uuid();
 });
 
 module.exports = Source;
