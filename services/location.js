@@ -1,5 +1,5 @@
 const {Location, Mention} = require('../models');
-const {Sequelize}          = require('../util/database');
+const {Sequelize}         = require('../util/database');
 
 module.exports = {
 
