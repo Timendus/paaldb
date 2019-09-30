@@ -12,10 +12,6 @@ MentionProperty.init({}, {
   charset: 'utf8mb4'
 });
 
-MentionProperty.beforeCreate((mentionproperty, _) => {
-  return mentionproperty.id = uuid();
-});
-
 Mention.belongsToMany(Property, { through: MentionProperty });
 Property.belongsToMany(Mention, { through: MentionProperty });
 

@@ -2,11 +2,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('MentionProperties', {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: Sequelize.UUID
-      },
       mentionId: {
         allowNull: false,
         type: Sequelize.UUID,
