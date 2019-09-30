@@ -12,7 +12,10 @@ Mention.init({
   latitude: Sequelize.STRING,
   longitude: Sequelize.STRING,
   height: Sequelize.INTEGER,
-  status: Sequelize.STRING
+  status: Sequelize.STRING,
+  externalId: Sequelize.STRING,
+  date: Sequelize.DATE,
+  link: Sequelize.STRING
 }, {
   sequelize,
   modelName: 'Mention',
