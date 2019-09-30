@@ -1,3 +1,6 @@
-module.exports = (coordinate) => {
-  return (Math.round(coordinate * 100000000) / 100000000).toFixed(8);
+module.exports = (coordinate, positions = 8) => {
+  return (
+    Math.round(coordinate * Math.pow(10, positions)) /
+      Math.pow(10, positions)
+  ).toFixed(positions);
 }
