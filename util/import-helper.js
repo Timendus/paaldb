@@ -1,102 +1,124 @@
-const {Source, Mention} = require('../models');
-const safeHTML          = require("./safe-html");
-const Logger            = require('./logger');
-const roundCoordinate   = require('./round-coordinate');
-const path              = require('path');
-const proj4             = require('proj4');
+const {Source, Mention, Property, MentionProperty} = require('../models');
+
+const safeHTML        = require("./safe-html");
+const Logger          = require('./logger');
+const roundCoordinate = require('./round-coordinate');
+const path            = require('path');
+const proj4           = require('proj4');
 
 proj4.defs("EPSG:25832","+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
-module.exports = {
+module.exports.save = async ({task, source, mentions, projection}) => {
+  // Sanitize the input a bit
+  task = path.basename(task);
+  projection = projection || 'WGS84';
 
-  save: ({task, source, mentions, projection}) => {
-    return new Promise((resolve, reject) => {
+  // If no data, assume task or remote source is broken and don't touch the database
+  if ( !source.name || !source.description || !source.contact || mentions.length == 0 )
+    return Logger.error(`Task ${task} seems to be down`);
 
-      // We don't need the whole path
-      task = path.basename(task);
-      projection = projection || 'WGS84';
+  // Create || find and update our source
+  const sourceObj = await saveSource(source);
 
-      // If no data, assume task or remote source is broken and don't touch the database
-      if ( !source.name || !source.description || !source.contact || mentions.length == 0 )
-        return Logger.error(`Task ${task} seems to be down`);
+  // Which mentions does our source have, before we save the new ones?
+  const oldMentions = await sourceObj.getMentions();
 
-      // Find or create our source in the database
-      Source.findOrCreate({
-        where: { name: safeHTML.parse(source.name) }
-      })
+  // Create || find and update our mentions (and link to this source)
+  const {numChanged, newMentions} = await saveMentions(sourceObj, mentions, projection);
 
-      .then(([sourceObj]) => {
+  // Mark those mentions that have disappeared from the source as stale
+  const staleMentions = await markStaleMentions(oldMentions, newMentions);
 
-        // Update our source information
-        sourceObj.description = safeHTML.parse(source.description);
-        sourceObj.contact     = safeHTML.parse(source.contact);
-        sourceObj.save();
+  // Which of the mentions we've seen this time are really newly created?
+  const oldMentionIds = oldMentions.map(m => m.id);
+  const createdMentions = newMentions.filter(n => !oldMentionIds.includes(n.id));
 
-        // Bookkeeping
-        const newMentions = [];
-        let numChanged = 0;
+  Logger.log(`Task ${task}: Newly created mentions (${createdMentions.length}): [${createdMentions.map(c => c.name).join(',')}]`);
+  Logger.log(`Task ${task}: Mentions marked as stale (${staleMentions.length}): [${staleMentions.map(c => c.name).join(',')}]`);
+  Logger.log(`Task ${task}: Otherwise, updated ${numChanged} mentions`);
+}
 
-        sourceObj.getMentions().then((oldMentions) => {
+async function saveSource(source) {
+  [sourceObj] = await Source.findOrCreate({
+    where: {
+      name: safeHTML.parse(source.name)
+    }
+  });
 
-          // Collect all promises so we can wait for them later
-          const promises = mentions.map((mention) => {
+  sourceObj.description = safeHTML.parse(source.description);
+  sourceObj.contact     = safeHTML.parse(source.contact);
+  await sourceObj.save();
 
-            // If no data, assume mention is invalid
-            if ( !mention.name || !mention.latitude || !mention.longitude )
-              return;
+  return sourceObj;
+}
 
-            // Find or create our mention in the database
-            return Mention.findOrCreate({
-              where: {
-                name: safeHTML.parse(mention.name),
-                SourceId: sourceObj.id
-              }
-            }).then(([mentionObj]) => {
+async function saveMentions(sourceObj, mentions, projection) {
+  let numChanged = 0;
+  const newMentions = [];
 
-              // Register that this mention is (still) in the source
-              newMentions.push(mentionObj);
+  for ( const mention of mentions ) {
+    // If no data, assume mention is invalid
+    if ( !mention.name || !mention.latitude || !mention.longitude )
+      continue;
 
-              // Project the coordinates to the right coordinate system
-              const coordinates = proj4(projection, 'WGS84', {
-                x: 1 * mention.longitude,
-                y: 1 * mention.latitude,
-                z: 1 * mention.height
-              });
-
-              // Update our mention information
-              mentionObj.status      = mention.status || Mention.status.ACTIVE;
-              mentionObj.description = safeHTML.parse(mention.description);
-              mentionObj.longitude   = roundCoordinate(coordinates.x);
-              mentionObj.latitude    = roundCoordinate(coordinates.y);
-              mentionObj.height      = coordinates.z || 0;
-
-              if ( mentionObj.changed() ) numChanged++;
-              return mentionObj.save();
-            });
-          });
-
-          // Wait for all saves, then present conclusions
-          Promise.all(promises).then(() => {
-            const created = newMentions.filter(n => !oldMentions.map(m => m.id).includes(n.id));
-            const stale   = oldMentions.filter(n => !newMentions.map(m => m.id).includes(n.id))
-                                       .filter(m => !m.stale == Mention.status.STALE);
-
-            Promise.all(stale.map((m) => {
-              m.status = Mention.status.STALE;
-              return m.save();
-            })).then(() => {
-              Logger.log(`Task ${task}: Newly created mentions (${created.length}): [${created.map(c => c.name).join(',')}]`);
-              Logger.log(`Task ${task}: Mentions marked as stale (${stale.length}): [${stale.map(c => c.name).join(',')}]`);
-              Logger.log(`Task ${task}: Otherwise, updated ${numChanged} mentions`);
-              resolve();
-            });
-          });
-
-        });
-
-      });
-
+    [mentionObj] = await Mention.findOrCreate({
+      where: {
+        name: safeHTML.parse(mention.name),
+        SourceId: sourceObj.id
+      }
     });
+
+    // Register that this mention is (still) in the source
+    newMentions.push(mentionObj);
+
+    // Project the coordinates to the right coordinate system
+    const coordinates = proj4(projection, 'WGS84', {
+      x: 1 * mention.longitude,
+      y: 1 * mention.latitude,
+      z: 1 * mention.height
+    });
+
+    // Update our mention information
+    mentionObj.status      = mention.status || Mention.status.ACTIVE;
+    mentionObj.description = safeHTML.parse(mention.description);
+    mentionObj.longitude   = roundCoordinate(coordinates.x);
+    mentionObj.latitude    = roundCoordinate(coordinates.y);
+    mentionObj.height      = coordinates.z || 0;
+
+    if ( mentionObj.changed() ) numChanged++;
+    await mentionObj.save();
+    await saveProperties(mentionObj, mention.properties);
   }
 
+  return {numChanged, newMentions};
+}
+
+async function saveProperties(mentionObj, properties) {
+  for ( const property in properties ) {
+    let value = properties[property];
+    if ( value === true  ) value = 'yes';
+    if ( value === false ) value = 'no';
+
+    const [propertyObj] = await Property.findOrCreate({
+      where: {
+        label: property,
+        value: value
+      }
+    });
+
+    await mentionObj.addProperty(propertyObj)
+  }
+}
+
+async function markStaleMentions(oldMentions, newMentions) {
+  const newMentionIds = newMentions.map(m => m.id);
+  const staleMentions = oldMentions.filter(m => !newMentionIds.includes(m.id))
+                                   .filter(m => m.status != Mention.status.STALE);
+
+  for ( const staleMention of staleMentions ) {
+    staleMention.status = Mention.status.STALE;
+    await staleMention.save();
+  }
+
+  return staleMentions;
 }
