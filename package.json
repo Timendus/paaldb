@@ -6,11 +6,12 @@
   "license": "GPL-3.0-or-later",
   "main": "index.js",
   "scripts": {
-    "start":  "NODE_ENV=production nodemon index.js",
-    "dev":    "NODE_ENV=development nodemon index.js",
+    "start": "NODE_ENV=production nodemon index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
     "import": "node scripts/import.js",
     "relink": "node scripts/relink.js",
-    "test":   "node scripts/test.js"
+    "fetch": "node scripts/fetch.js",
+    "test": "mocha --recursive --watch"
   },
   "dependencies": {
     "express": "^4.17.1",
@@ -24,6 +25,8 @@
     "xss": "^1.0.6"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.1",
     "nodemon": "^1.19.2",
     "sequelize-cli": "^5.5.0"
   }
