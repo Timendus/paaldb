@@ -79,7 +79,7 @@ async function saveMentions(sourceObj, mentions, projection) {
     });
 
     // Update our mention information
-    mentionObj.externalId  = mention.externalId || createExternalId(mention);
+    mentionObj.externalId  = mention.externalId ? '' + mention.externalId : createExternalId(mention);
     mentionObj.status      = mention.status || Mention.status.ACTIVE;
     mentionObj.description = safeHTML.parse(mention.description);
     mentionObj.longitude   = roundCoordinate(coordinates.x);
@@ -101,6 +101,9 @@ async function saveMentions(sourceObj, mentions, projection) {
 function createExternalId(mention) {
   return `${safeHTML.parse(mention.name)}-${roundCoordinate(mention.latitude, 2)}-${roundCoordinate(mention.longitude, 2)}`;
 }
+
+// Export for testing
+module.exports.createExternalId = createExternalId;
 
 async function saveProperties(mentionObj, properties) {
   for ( const property in properties ) {
