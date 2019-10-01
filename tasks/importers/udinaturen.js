@@ -22,17 +22,20 @@ module.exports.run = async () => {
     const attributes = (l.attributes.length > 0 ? l.attributes : l.subcategory.attributes).map(a => a.attribute);
 
     return {
+      externalId:  l.facilityid,
+      date:        l.lastedited,
+      link:        l.facilitylink,
       name:        l.name,
       latitude:    coordinates[1],
       longitude:   coordinates[0],
-      description: l.longdescription,
+      description: l.longdescription || l.shortdescription,
 
       properties:  {
         accessibleWithWheelchair: attributes.includes(1),
         hasDrinkingWater:         attributes.includes(6),
         hasShelter:               attributes.includes(9),
         hasFireplace:             attributes.includes(10),
-        accessFromWater:          attributes.includes(11),
+        accessibleWithBoat:       attributes.includes(11),
         hasShower:                attributes.includes(12),
         dogsOnLeashAllowed:       attributes.includes(13),
         horsesAllowed:            attributes.includes(14),
