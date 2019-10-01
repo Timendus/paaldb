@@ -1,10 +1,11 @@
 const Request      = require('../../util/request');
 const importHelper = require('../../util/import-helper');
 const parser       = require('node-html-parser');
+const link         = "https://www.logerenbijdeboswachter.nl/paalkamperen";
 
 // Function to query the Staatsbosbeheer website
 module.exports.run = async () => {
-  let result = await new Request("https://www.logerenbijdeboswachter.nl/paalkamperen");
+  let result = await new Request(link);
 
   // Parse HTML file
   result = parser.parse(result);
@@ -26,11 +27,12 @@ module.exports.run = async () => {
 
     const [_, lat, lon, height] = coordinates.match(/@([\d\.]*),([\d\.]*),(\d*)m/);
     return {
-      name: p.querySelector('a.title').text,
+      name:        p.querySelector('a.title').text,
       description: p.querySelector('div.text').innerHTML,
-      latitude: lat,
-      longitude: lon,
-      height: height
+      latitude:    lat,
+      longitude:   lon,
+      height:      height,
+      link:        link
     }
   });
 
