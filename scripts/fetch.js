@@ -17,7 +17,7 @@ const { natuurbrandrisico,
   // await importers.kampeermeneer.run();
   // await importers.staatsbosbeheer.run();
   // await importers.stefanKruithof.run();
-  await importers.udinaturen.run();
+  // await importers.udinaturen.run();
   // await importers.vindskyddskartan.run();
   // await importers.wildKamperen.run();
 
