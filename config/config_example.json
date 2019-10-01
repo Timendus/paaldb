@@ -20,6 +20,27 @@
 
   },
 
+  "test": {
+
+    "username": "travis",
+    "password": "",
+    "database": "paaldb_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "dialectOptions": {
+      "charset": "utf8mb4"
+    },
+
+    "server": {
+      "port": 9441
+    },
+
+    "mapbox": {
+      "token": "your Mapbox token"
+    }
+
+  },
+
   "production": {
 
     "username": "user",
