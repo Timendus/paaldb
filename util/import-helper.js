@@ -86,7 +86,9 @@ async function saveMentions(sourceObj, mentions, projection) {
     mentionObj.latitude    = roundCoordinate(coordinates.y);
     mentionObj.height      = coordinates.z || 0;
     mentionObj.link        = safeHTML.parse(mention.link);
-    mentionObj.date        = mention.date;
+
+    if ( mention.date )
+      mentionObj.date = mention.date;
 
     if ( mentionObj.changed() ) numChanged++;
     await mentionObj.save();

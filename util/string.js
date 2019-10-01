@@ -12,18 +12,26 @@ module.exports = {
 
   stripName: (name) => {
     return name.replace(new RegExp(`(${[
-      "Paal\\s",
-      "Paalkampeerplaats\\s",
-      "Paalcamping\\s",
-      "Aanlegplaats\\s",
-      "Aanlegplaatsen\\s",
-      "Aanlegsteiger\\s",
-      "Gastblog:\\s",
-      "Bivakzone\\s",
-      "Bivouac de\\s",
+      "Paal\\s+",
+      "Paalkampeerplaats\\s+",
+      "Paalcamping\\s+",
+      "Aanlegplaats\\s+",
+      "Aanlegplaatsen\\s+",
+      "Aanlegsteiger\\s+",
+      "Gastblog:\\s+",
+      "Bivakzone:\\s+",
+      "Bivakzone\\s+",
+      "Bivouac des\\s+",
+      "Bivouac de\\s+",
+      "Bivouac du\\s+",
       "Bivouac d\\'",
-      "Bivouac des\\s",
-      "Bivouac du\\s"
+      "Bivouac\\s+",
+      "Aire de Bivouac de la\\s+",
+      "Aire de Bivouac des\\s+",
+      "Aire de Bivouac de\\s+",
+      "Aire de Bivouac du\\s+",
+      "Aire de Bivouac d\\'",
+      "Aire de Bivouac\\s+"
     ].join('|')})`, 'gi'), '');
   }
 
