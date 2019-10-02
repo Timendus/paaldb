@@ -11,7 +11,8 @@
     },
 
     "server": {
-      "port": 9441
+      "port": 9441,
+      "verbose": true
     },
 
     "mapbox": {
@@ -32,7 +33,8 @@
     },
 
     "server": {
-      "port": 9441
+      "port": 9441,
+      "verbose": false
     },
 
     "mapbox": {
@@ -54,7 +56,8 @@
     },
 
     "server": {
-      "port": 9441
+      "port": 9441,
+      "verbose": true
     },
 
     "mapbox": {
