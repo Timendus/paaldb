@@ -27,6 +27,7 @@
     "password": "",
     "database": "paaldb_test",
     "host": "127.0.0.1",
+    "logging": false,
     "dialect": "mysql",
     "dialectOptions": {
       "charset": "utf8mb4"
