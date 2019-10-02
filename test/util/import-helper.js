@@ -13,10 +13,11 @@ describe('Import helper', () => {
   describe('#createExternalId()', () => {
     it('should create a semi-unique id for a mention, based on name and rough location', () => {
       expect(importHelper.createExternalId({
-        name: 'Paal de Grote Kaassouffle',
+        name: 'Fast Walking Dinosaurs'
+      }, {
         latitude: 50.2483656,
         longitude: 6.2343486
-      })).to.equal('Paal de Grote Kaassouffle-50.25-6.23')
+      })).to.equal('Fast Walking Dinosaurs-50.248-6.234')
     });
   });
 
