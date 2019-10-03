@@ -1,3 +1,5 @@
+![Build status](https://travis-ci.org/Timendus/paaldb.svg?branch=master)
+
 # PaalDB
 
 _A smart database of paalkampeer<sup>[1](#what-is-it)</sup> locations_
