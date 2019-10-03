@@ -30,7 +30,7 @@ module.exports.run = async () => {
       name:        p.name._text,
       latitude:    lat,
       longitude:   lon,
-      description: p.description._text.trim()
+      description: p.description._text
     }
   });
 
