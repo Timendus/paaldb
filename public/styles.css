@@ -81,7 +81,7 @@ html, body, #map {
   border-radius: 3px;
   object-fit: contain;
 }
-#location h2, #location, h3 {
+#location h2, #location h3 {
   margin: 1em 0;
 }
 #location ul.properties li {
