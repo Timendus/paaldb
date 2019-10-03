@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - 10
+env:
+  - NODE_ENV=test
+services:
+  - mysql
+before_script:
+  - cp config/config_example.json config/config.json
+  - npx sequelize db:create
+  - npx sequelize db:migrate
+script: npm run travis

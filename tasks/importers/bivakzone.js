@@ -27,16 +27,15 @@ module.exports.run = async () => {
   };
 
   // Information on the different locations is spread over a lot of pages
-  // Collect the html for the different pages
-  const pages = await Promise.all(
-    result.querySelectorAll('.art-box-body li a')
-          .map(p => new Request(`${root}${p.attributes.href}`))
-  );
+  // Collect the links for the different pages
+  const links = result.querySelectorAll('.art-box-body li a')
+                      .map(a => a.attributes.href);
 
   const mentions = [];
 
-  for ( let result of pages ) {
-    // Parse HTML file
+  for ( const link of links ) {
+    // Fetch and parse page
+    let result = await new Request(`${root}${link}`)
     result = parser.parse(result);
 
     const title = result.querySelector('h2');
@@ -47,20 +46,34 @@ module.exports.run = async () => {
     // Without a table with at least two rows, this page does not contain (a) mention(s)
     if ( !table ) continue;
 
-    // With a title 'Bivakzone: name', this is a single mention
-    if ( title && title.text && title.text.startsWith('Bivakzone:') ) {
+    // Find a description of the place(s)
+    const description = result.querySelectorAll('h4')
+                              .filter(t => t.text.split(/\s+/).length > 6) // More than 6 words
+                              .map(t => t.text)
+                              .join(' ');
+
+    // Get the file names of the images in the bottom row of the table for the properties
+    const images = table.querySelectorAll('tr')
+                        .pop()
+                        .querySelectorAll('img')
+                        .map(i => i.attributes.src);
+
+    // With a title 'Bivakzone: name' or 'Aire de Bivouac name', this is a single mention
+    if ( title && title.text && (title.text.startsWith('Bivakzone:') || title.text.startsWith('Aire de Bivouac')) ) {
 
       // Get the value for the row that says 'WGS84'
       const [lat, lon] = table.querySelectorAll('tr')
                               .filter(tr => tr.querySelector('td span strong').text == 'WGS84')
-                              .map(tr => tr.querySelectorAll('td span')[1].text.split(' '))
-                              .shift();
+                              .shift()
+                              .querySelectorAll('td span')
+                              .pop()
+                              .text.trim()
+                              .split(/\s+/);
 
-      mentions.push({
-        name: title.text.substr('Bivakzone:'.length).trim(),
-        latitude: lat,
-        longitude: lon
-      });
+      mentions.push(createMention({
+        name: title.text.trim(),
+        table, lat, lon, link, description, images
+      }));
 
       // Done with this page!
       continue;
@@ -72,13 +85,16 @@ module.exports.run = async () => {
 
     rows.forEach(row => {
       // Find the coordinates in the fourth column
-      const [lat, lon] = row.querySelectorAll('td')[3].text.trim().split(' ');
+      const [lat, lon] = row.querySelectorAll('td')[3]
+                            .text.trim()
+                            .split(/\s+/);
 
-      mentions.push({
+      mentions.push(createMention({
         name: row.querySelector('td strong').text.trim(),
-        latitude: lat.trim(),
-        longitude: lon.trim()
-      });
+        lat:  lat.trim(),
+        lon:  lon.trim(),
+        table, link, description, images
+      }));
     })
   }
 
@@ -88,4 +104,23 @@ module.exports.run = async () => {
     source,
     mentions
   });
+}
+
+function createMention({name, table, lat, lon, link, description, images}) {
+  return {
+    name:        name,
+    description: description,
+    link:        `${root}${link}`,
+    latitude:    lat,
+    longitude:   lon,
+
+    properties: {
+      hasShelter:             images.some(i => i.includes('icoonshelter')),
+      accessibleWithBicycle:  images.some(i => i.includes('toegangfietser')),
+      fireAllowed:           !images.some(i => i.includes('verbodvuur')),
+      hasWaterPump:          !images.some(i => i.includes('geenpomp')),
+      dogsOnLeashAllowed:    !images.some(i => i.includes('verbodhonden')),
+      isNextToRiver:          images.some(i => i.includes('icoonrivier'))
+    }
+  };
 }

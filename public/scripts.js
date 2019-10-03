@@ -116,13 +116,43 @@ window.addEventListener('load', async () => {
                 return `
                   <li>
                     <details>
-                      <summary><b>${m.Source.name}</b> - ${m.status}</summary>
+
+                      <summary>
+                        <b>${m.Source.name}</b> - ${m.status}
+                        ${ m.Properties.length > 0 ? `
+                          <section class='properties'>
+                            ${
+                              m.Properties.map(p => {
+                                return p.image ? `<img class='${p.label}-${p.value}' src='${p.image}' title='${p.description}' />` : '';
+                              }).join('')
+                            }
+                          </section>
+                        ` : ''}
+                      </summary>
+
                       <h2>${m.name}</h2>
+
+                      ${ m.Properties.filter(p => p.image).length > 0 ? `
+                        <h3>Eigenschappen van deze locatie</h3>
+                        <ul class='properties'>
+                          ${
+                            m.Properties.map(p => {
+                              return p.image ? `<li><img class='${p.label}-${p.value}' src='${p.image}' title='${p.description}' /> ${p.description}</li>` : '';
+                            }).join('')
+                          }
+                        </ul>
+                      ` : ''}
+
                       ${ m.description ? `
                         <section class='description'>
                           ${m.description}
                         </section>
                       ` : '' }
+
+                      ${ m.link ? `
+                        <a class='read-more' href='${m.link}' target='_blank'>Lees verder bij ${m.Source.name} &raquo;</a>
+                      ` : ''}
+
                     </details>
                   </li>
                 `;

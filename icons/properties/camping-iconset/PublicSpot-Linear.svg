@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="59px" height="58px" viewBox="0 0 59 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>PublicSpot-Linear</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Linear-Camping-iconset" transform="translate(-707.000000, -524.000000)" stroke="#434F5E">
+            <g id="PublicSpot-Linear" transform="translate(708.000000, 525.000000)">
+                <path d="M4.453125,5.33148318 L4.453125,5.33148318 L4.453125,50.6685168 C4.453125,51.1586536 4.85035356,51.5555556 5.33680352,51.5555556 L51.6631965,51.5555556 C52.1474852,51.5555556 52.546875,51.1568391 52.546875,50.6685168 L52.546875,5.33148318 C52.546875,4.84134638 52.1496464,4.44444444 51.6631965,4.44444444 L5.33680352,4.44444444 C4.85251479,4.44444444 4.453125,4.84316093 4.453125,5.33148318 L4.453125,5.33148318 Z M0,5.33148318 C0,2.38698633 2.39469999,0 5.33680352,0 L51.6631965,0 C54.6106317,0 57,2.38833572 57,5.33148318 L57,50.6685168 C57,53.6130137 54.6053,56 51.6631965,56 L5.33680352,56 C2.38936833,56 0,53.6116643 0,50.6685168 L0,5.33148318 L0,5.33148318 Z" id="Shape" stroke-width="1.8" fill-rule="nonzero"></path>
+                <g id="Group" transform="translate(11.043750, 12.444444)" stroke-width="2">
+                    <rect id="Path" x="1.21540698" y="29.3645646" width="32.4435751" height="1" rx="0.5"></rect>
+                    <path d="M17.4371948,19.5680533 L11.850962,28.9512615 L23.0234276,28.9512615 L17.4371948,19.5680533 Z" id="Triangle-1"></path>
+                    <g id="Path-1444" transform="translate(11.479530, 15.405486) rotate(-328.000000) translate(-11.479530, -15.405486) translate(10.479530, -1.094514)" stroke-linecap="round">
+                        <path d="M0.807776163,0.606120845 L0.807776163,32.5010688"></path>
+                    </g>
+                    <g id="Path-1444-Copy" transform="translate(23.606291, 15.405486) scale(-1, 1) rotate(-328.000000) translate(-23.606291, -15.405486) translate(22.606291, -1.094514)" stroke-linecap="round">
+                        <path d="M0.807776163,0.606120845 L0.807776163,32.5010688" id="Path-1444"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

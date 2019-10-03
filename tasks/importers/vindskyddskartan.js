@@ -1,7 +1,8 @@
-const Request      = require('../../util/request');
-const importHelper = require('../../util/import-helper');
-const parser       = require('xml-js');
-const {Mention}    = require('../../models');
+const Request         = require('../../util/request');
+const importHelper    = require('../../util/import-helper');
+const roundCoordinate = require('../../util/round-coordinate');
+const parser          = require('xml-js');
+const {Mention}       = require('../../models');
 
 // Function to query the map
 module.exports.run = async () => {
@@ -30,6 +31,7 @@ module.exports.run = async () => {
     const [lon, lat] = p.Point.coordinates._text.split(',');
 
     return {
+      externalId:  `${source.name}-${roundCoordinate(lat, 4)}-${roundCoordinate(lon, 4)}`,
       name:        p.name._text,
       latitude:    lat,
       longitude:   lon,

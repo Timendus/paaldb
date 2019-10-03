@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="57px" height="57px" viewBox="0 0 57 57" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>Compass</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Linear-Camping-iconset" transform="translate(-318.000000, -135.000000)" stroke="#434F5E" stroke-width="2">
+            <g id="Compass" transform="translate(318.000000, 135.000000)">
+                <path d="M28.5,7.88873813 L28.5,9.99240163 M49.0796095,28.3994573 L46.975946,28.3994573 M28.5,48.9101764 L28.5,46.8065129 M7.92039047,28.3994573 L10.024054,28.3994573" id="Line" stroke-linecap="round"></path>
+                <ellipse id="base" cx="28.5869774" cy="28.4994486" rx="27.4110515" ry="27.3241433"></ellipse>
+                <g id="direction" transform="translate(28.218771, 29.064851) rotate(45.000000) translate(-28.218771, -29.064851) translate(21.718771, 13.064851)">
+                    <path d="M6.21491751,2.03410088 L1.50049251,14.791254 C1.27231462,15.4086994 1.2721861,16.5243804 1.50049251,17.1421736 L6.21491751,29.8993268 L10.9293425,17.1421736 C11.1575204,16.5247282 11.1576489,15.4090472 10.9293425,14.791254 L6.21491751,2.03410088 Z M5.77567403,31.0611182 C5.77538198,31.0614365 5.77509085,31.061755 5.77480063,31.0620736 C5.77511641,31.0617269 5.77667191,31.0591175 5.77926874,31.0542877 Z" id="Path-5"></path>
+                    <path d="M1.91012147,15.1284641 L10.6180104,15.1284641" id="Line" stroke-linecap="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

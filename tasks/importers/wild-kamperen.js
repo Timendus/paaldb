@@ -1,6 +1,7 @@
 const Request      = require('../../util/request');
 const importHelper = require('../../util/import-helper');
 const parser       = require('xml-js');
+const htmlParser   = require('node-html-parser');
 const {Mention}    = require('../../models');
 
 // Function to query the map
@@ -26,12 +27,17 @@ module.exports.run = async () => {
   const mentions = result.kml.Document.Folder.Placemark.map(p => {
     const [lon, lat] = p.Point.coordinates._text.split(',');
 
+    const html = htmlParser.parse(p.description._cdata);
+    let link = html.querySelector('a');
+    link = link ? link.attributes.href : null;
+
     return {
       name:        p.name._text,
       latitude:    lat,
       longitude:   lon,
       status:      p.styleUrl._text == '#blank_red' ? Mention.status.STALE : Mention.status.ACTIVE,
       description: p.description._cdata,
+      link:        link,
 
       properties: {
         hasShelter: p.styleUrl._text == '#home'

@@ -1,4 +1,4 @@
-const {Source, Mention, Property, MentionProperty} = require('../models');
+const {Source, Mention, Property} = require('../models');
 
 const safeHTML        = require("./safe-html");
 const Logger          = require('./logger');
@@ -39,11 +39,11 @@ module.exports.save = async ({task, source, mentions, projection}) => {
 }
 
 async function saveSource(source) {
-  [sourceObj] = await Source.findOrCreate({
+  const sourceObj = (await Source.findOrCreate({
     where: {
       name: safeHTML.parse(source.name)
     }
-  });
+  })).shift();
 
   sourceObj.description = safeHTML.parse(source.description);
   sourceObj.contact     = safeHTML.parse(source.contact);
@@ -61,12 +61,12 @@ async function saveMentions(sourceObj, mentions, projection) {
     if ( !mention.name || !mention.latitude || !mention.longitude )
       continue;
 
-    [mentionObj] = await Mention.findOrCreate({
+    const mentionObj = (await Mention.findOrCreate({
       where: {
-        name: safeHTML.parse(mention.name),
-        SourceId: sourceObj.id
+        externalId: mention.externalId ? '' + mention.externalId : createExternalId(sourceObj, mention),
+        SourceId:   sourceObj.id
       }
-    });
+    })).shift();
 
     // Register that this mention is (still) in the source
     newMentions.push(mentionObj);
@@ -79,11 +79,16 @@ async function saveMentions(sourceObj, mentions, projection) {
     });
 
     // Update our mention information
+    mentionObj.name        = safeHTML.parse(mention.name);
     mentionObj.status      = mention.status || Mention.status.ACTIVE;
     mentionObj.description = safeHTML.parse(mention.description);
     mentionObj.longitude   = roundCoordinate(coordinates.x);
     mentionObj.latitude    = roundCoordinate(coordinates.y);
     mentionObj.height      = coordinates.z || 0;
+    mentionObj.link        = safeHTML.parse(mention.link);
+
+    if ( mention.date )
+      mentionObj.date = mention.date;
 
     if ( mentionObj.changed() ) numChanged++;
     await mentionObj.save();
@@ -93,18 +98,25 @@ async function saveMentions(sourceObj, mentions, projection) {
   return {numChanged, newMentions};
 }
 
+function createExternalId(sourceObj, mention) {
+  return `${sourceObj.name}-${roundCoordinate(mention.latitude, 3)}-${roundCoordinate(mention.longitude, 3)}`;
+}
+
+// Export for testing
+module.exports.createExternalId = createExternalId;
+
 async function saveProperties(mentionObj, properties) {
   for ( const property in properties ) {
     let value = properties[property];
     if ( value === true  ) value = 'yes';
     if ( value === false ) value = 'no';
 
-    const [propertyObj] = await Property.findOrCreate({
+    const propertyObj = (await Property.findOrCreate({
       where: {
         label: property,
         value: value
       }
-    });
+    })).shift();
 
     await mentionObj.addProperty(propertyObj)
   }

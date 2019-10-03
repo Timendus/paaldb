@@ -49,6 +49,62 @@ html, body, #map {
 #location img {
   max-width: 100%;
 }
+#location details {
+  position: relative;
+  background-color: rgba(255,255,255,0.1);
+  padding: 1em;
+  margin: 0.5em 0;
+}
+#location details summary {
+  margin: -1em;
+  padding: 1em;
+  cursor: pointer;
+}
+#location details summary:hover {
+  background-color: rgba(0,0,0,0.2);
+}
+#location details summary:focus {
+  outline: none;
+  background-color: rgba(0,0,0,0.2);
+}
+#location section.properties {
+  display: inline;
+  position: absolute;
+  right: 0.5em;
+}
+#location .properties img {
+  height: 2rem;
+  width: 2rem;
+  margin: -0.4rem 0 0 3px;
+  padding: 3px;
+  background-color: rgba(255,255,255,0.8);
+  border-radius: 3px;
+  object-fit: contain;
+}
+#location h2, #location, h3 {
+  margin: 1em 0;
+}
+#location ul.properties li {
+  margin-left: 3em;
+  height: 2.5em;
+}
+#location ul.properties li img {
+  margin-left: -3em;
+  float: left;
+}
+#location .description {
+  border-left: 3px solid rgba(174, 255, 100, 0.3);
+  padding-left: 1em;
+  margin-top: 1em;
+}
+#location .read-more {
+  display: block;
+  margin-top: 1em;
+  text-align: right;
+}
+#location .read-more:hover, #location .read-more:focus {
+  color: #9ec3a6;
+}
 @media screen and (max-width: 768px) {
   #location {
     left: 0;

@@ -11,7 +11,31 @@
     },
 
     "server": {
-      "port": 9441
+      "port": 9441,
+      "verbose": true
+    },
+
+    "mapbox": {
+      "token": "your Mapbox token"
+    }
+
+  },
+
+  "test": {
+
+    "username": "travis",
+    "password": "",
+    "database": "paaldb_test",
+    "host": "127.0.0.1",
+    "logging": false,
+    "dialect": "mysql",
+    "dialectOptions": {
+      "charset": "utf8mb4"
+    },
+
+    "server": {
+      "port": 9441,
+      "verbose": false
     },
 
     "mapbox": {
@@ -33,7 +57,8 @@
     },
 
     "server": {
-      "port": 9441
+      "port": 9441,
+      "verbose": true
     },
 
     "mapbox": {
