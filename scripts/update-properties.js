@@ -50,6 +50,18 @@ const svgo         = new Svgo();
       value: 'yes',
       image: './icons/properties/water.svg',
       description: 'Er is een waterpomp aanwezig'
+    },
+    {
+      label: 'hasFireplace',
+      value: 'yes',
+      image: './icons/properties/fire.svg',
+      description: 'Er is een stookplaats aanwezig'
+    },
+    {
+      label: 'fireAllowed',
+      value: 'yes',
+      image: './icons/properties/fire.svg',
+      description: 'Vuur stoken is toegestaan'
     }
   ]);
 
