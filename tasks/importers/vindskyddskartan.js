@@ -31,7 +31,7 @@ module.exports.run = async () => {
     const [lon, lat] = p.Point.coordinates._text.split(',');
 
     return {
-      externalId:  `${p.name._text}-${roundCoordinate(lat, 3)}-${roundCoordinate(lon, 3)}`,
+      externalId:  `${source.name}-${roundCoordinate(lat, 4)}-${roundCoordinate(lon, 4)}`,
       name:        p.name._text,
       latitude:    lat,
       longitude:   lon,
