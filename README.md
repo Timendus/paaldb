@@ -1,4 +1,4 @@
-![Build status](https://travis-ci.org/Timendus/paaldb.svg?branch=master)
+[![Build status](https://travis-ci.org/Timendus/paaldb.svg?branch=master)](https://travis-ci.org/Timendus/paaldb)
 
 # PaalDB
 
