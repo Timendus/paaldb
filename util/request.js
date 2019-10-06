@@ -22,6 +22,9 @@ class Request {
       const req = http.request(options, (res) => {
         Logger.log(`Request to '${urlString}' status code: ${res.statusCode}`);
 
+        if ( res.statusCode != 200 )
+          reject('Request: Page not found');
+
         let result = '';
 
         res.on('data', (d) => {

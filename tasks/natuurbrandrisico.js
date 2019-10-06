@@ -4,7 +4,13 @@ const pointInPolygon = require('robust-point-in-polygon');
 const {Location}     = require('../models');
 
 module.exports.run = async () => {
-  let result = await new Request(`https://www.natuurbrandrisico.nl/maps/script_all_regios.js?ts=${Date.now().valueOf()}`);
+  let result;
+  try {
+    result = await new Request(`https://www.natuurbrandrisico.nl/maps/script_all_regios.js?ts=${Date.now().valueOf()}`);
+  } catch(error) {
+    return Logger.error(error);
+  }
+
   const locations = await Location.findAll();
 
   // Cut off the parts that aren't JSON

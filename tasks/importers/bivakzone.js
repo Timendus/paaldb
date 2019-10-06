@@ -6,6 +6,7 @@
 // so for the time being it's worth the hassle.
 
 const Request      = require('../../util/request');
+const Logger       = require('../../util/logger');
 const importHelper = require('../../util/import-helper');
 const parser       = require('node-html-parser');
 const root         = "http://www.bivakzone.be";
@@ -35,8 +36,14 @@ module.exports.run = async () => {
 
   for ( const link of links ) {
     // Fetch and parse page
-    let result = await new Request(`${root}${link}`)
-    result = parser.parse(result);
+    let result;
+    try {
+      result = await new Request(`${root}${link}`)
+      result = parser.parse(result);
+    } catch(error) {
+      Logger.error(error);
+      continue;
+    }
 
     const title = result.querySelector('h2');
     const table = result.querySelectorAll('table tbody')
