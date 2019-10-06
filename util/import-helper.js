@@ -81,7 +81,7 @@ async function saveMentions(sourceObj, mentions, projection) {
     // Update our mention information
     mentionObj.name        = safeHTML.parse(mention.name);
     mentionObj.status      = mention.status || Mention.status.ACTIVE;
-    mentionObj.description = safeHTML.parse(mention.description);
+    mentionObj.description = safeHTML.trim(safeHTML.parse(mention.description));
     mentionObj.longitude   = roundCoordinate(coordinates.x);
     mentionObj.latitude    = roundCoordinate(coordinates.y);
     mentionObj.height      = coordinates.z || 0;

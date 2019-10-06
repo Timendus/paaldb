@@ -29,9 +29,18 @@ const targetOptions = {
   }
 }
 
-module.exports.parse = (html) => {
-  if ( !html ) return null;
-  html = html.replace(new RegExp(`(\n|\t|\r)`, 'g'), '');
-  html = xss(html, xssOptions);
-  return xss(html, targetOptions);
+module.exports = {
+
+  parse: (html) => {
+    if ( !html ) return null;
+    html = html.replace(new RegExp(`(\n|\t|\r)`, 'g'), '');
+    html = xss(html, xssOptions);
+    return xss(html, targetOptions);
+  },
+
+  trim: (html) => {
+    if ( !html ) return null;
+    return html.trim().replace(/(^\<br\s{0,}\/?\>\s{0,}|\s{0,}\<br\s{0,}\/?\>$)/g, '');
+  }
+
 }
