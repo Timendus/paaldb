@@ -2,41 +2,88 @@ const {Source, Mention, Property} = require('../models');
 
 const safeHTML        = require("./safe-html");
 const Logger          = require('./logger');
+const Request         = require('./request');
 const roundCoordinate = require('./round-coordinate');
 const path            = require('path');
 const proj4           = require('proj4');
+const xmlConverter    = require('xml-js');
+const htmlConverter   = require('node-html-parser');
 
 proj4.defs("EPSG:25832","+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
-module.exports.save = async ({task, source, mentions, projection}) => {
-  // Sanitize the input a bit
-  task = path.basename(task);
-  projection = projection || 'WGS84';
+module.exports = {
 
-  // If no data, assume task or remote source is broken and don't touch the database
-  if ( !source.name || !source.description || !source.contact || mentions.length == 0 )
-    return Logger.error(`Task ${task} seems to be down`);
+  fetchKML: (url) => {
+    return new Promise((resolve, reject) => {
+      new Request(url)
+      .then(result => {
+        if (!result) {
+          Logger.error(`Received no content from ${url}`);
+          resolve(false);
+        }
+        resolve(xmlConverter.xml2js(result, {
+          compact:           true,
+          ignoreDeclaration: true,
+          ignoreAttributes:  true,
+          trim:              true
+        }));
+      })
+      .catch(error => {
+        Logger.error(error);
+        resolve(false);
+      });
+    });
+  },
 
-  // Create || find and update our source
-  const sourceObj = await saveSource(source);
+  fetchHTML: (url) => {
+    return new Promise((resolve, reject) => {
+      new Request(url)
+      .then(result => {
+        if (!result) {
+          Logger.error(`Received no content from ${url}`);
+          resolve(false);
+        }
+        resolve(htmlConverter.parse(result));
+      })
+      .catch(error => {
+        Logger.error(error);
+        resolve(false);
+      });
+    });
+  },
 
-  // Which mentions does our source have, before we save the new ones?
-  const oldMentions = await sourceObj.getMentions();
+  save: async ({task, source, mentions, projection}) => {
+    // Sanitize the input a bit
+    task = path.basename(task);
+    projection = projection || 'WGS84';
 
-  // Create || find and update our mentions (and link to this source)
-  const {numChanged, newMentions} = await saveMentions(sourceObj, mentions, projection);
+    // If no data, assume task or remote source is broken and don't touch the database
+    if ( !source.name || !source.description || !source.contact || mentions.length == 0 )
+      return Logger.error(`Task ${task} seems to be down`);
 
-  // Mark those mentions that have disappeared from the source as stale
-  const staleMentions = await markStaleMentions(oldMentions, newMentions);
+    // Create || find and update our source
+    const sourceObj = await saveSource(source);
 
-  // Which of the mentions we've seen this time are really newly created?
-  const oldMentionIds = oldMentions.map(m => m.id);
-  const createdMentions = newMentions.filter(n => !oldMentionIds.includes(n.id));
+    // Which mentions does our source have, before we save the new ones?
+    const oldMentions = await sourceObj.getMentions();
 
-  Logger.log(`Task ${task}: Newly created mentions (${createdMentions.length}): [${createdMentions.map(c => c.name).join(',')}]`);
-  Logger.log(`Task ${task}: Mentions marked as stale (${staleMentions.length}): [${staleMentions.map(c => c.name).join(',')}]`);
-  Logger.log(`Task ${task}: Otherwise, updated ${numChanged} mentions`);
+    // Create || find and update our mentions (and link to this source)
+    const {numChanged, newMentions} = await saveMentions(sourceObj, mentions, projection);
+
+    // Mark those mentions that have disappeared from the source as stale
+    const staleMentions = await markStaleMentions(oldMentions, newMentions);
+
+    // Which of the mentions we've seen this time are really newly created?
+    const oldMentionIds = oldMentions.map(m => m.id);
+    const createdMentions = newMentions.filter(n => !oldMentionIds.includes(n.id));
+
+    Logger.log(`Task ${task}: Newly created mentions (${createdMentions.length}): [${createdMentions.map(c => c.name).join(',')}]`);
+    Logger.log(`Task ${task}: Mentions marked as stale (${staleMentions.length}): [${staleMentions.map(c => c.name).join(',')}]`);
+    Logger.log(`Task ${task}: Otherwise, updated ${numChanged} mentions`);
+  }
+
 }
+
 
 async function saveSource(source) {
   const sourceObj = (await Source.findOrCreate({

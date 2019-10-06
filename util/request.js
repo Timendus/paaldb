@@ -23,7 +23,7 @@ class Request {
         Logger.log(`Request to '${urlString}' status code: ${res.statusCode}`);
 
         if ( res.statusCode != 200 )
-          reject('Request: Page not found');
+          return reject('Request: Page not found');
 
         let result = '';
 
@@ -36,8 +36,7 @@ class Request {
       });
 
       req.on('error', (error) => {
-        Logger.error(`Request to ${urlString} failed with error: ${error}`);
-        reject(error);
+        return reject(`Request to '${urlString}' failed with error: ${error}`);
       });
 
       req.end()
