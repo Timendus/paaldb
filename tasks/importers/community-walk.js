@@ -1,19 +1,9 @@
-const Request      = require('../../util/request');
 const importHelper = require('../../util/import-helper');
-const convert      = require('xml-js');
-const {Mention}    = require('../../models');
 
 // Function to query the map
 module.exports.run = async () => {
-  let result = await new Request("http://www.communitywalk.com/xml/kml/14583");
-
-  // Parse KML file
-  result = convert.xml2js(result, {
-    compact:           true,
-    ignoreDeclaration: true,
-    ignoreAttributes:  true,
-    trim:              true
-  });
+  const result = await importHelper.fetchKML("http://www.communitywalk.com/xml/kml/14583");
+  if (!result) return;
 
   // Collect source information
   const source = {
@@ -23,7 +13,12 @@ module.exports.run = async () => {
   };
 
   // Collect the locations we mention
-  const mentions = result.kml.Document.Folder.Folder.filter(f => f.name._text == 'Paalkampeerplaats').shift().Placemark.map((p) => {
+  const mentions = result.kml.Document.Folder.Folder
+                   .filter(f => f.name._text == 'Paalkampeerplaats')
+                   .shift()
+                   .Placemark
+                   .map((p) => {
+
     const [lon, lat] = p.Point.coordinates._text.split(',');
 
     return {

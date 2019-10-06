@@ -5,18 +5,13 @@
 // website contains a large number of locations that few other sources mention,
 // so for the time being it's worth the hassle.
 
-const Request      = require('../../util/request');
-const Logger       = require('../../util/logger');
 const importHelper = require('../../util/import-helper');
-const parser       = require('node-html-parser');
 const root         = "http://www.bivakzone.be";
 
 // Function to query bivakzone.be
 module.exports.run = async () => {
-  let result = await new Request(`${root}/overzichtskaart.html`);
-
-  // Parse HTML file
-  result = parser.parse(result);
+  const result = await importHelper.fetchHTML(`${root}/overzichtskaart.html`);
+  if (!result) return;
 
   // Collect source information
   const mail  = result.querySelectorAll('.art-footer-text a')[1].attributes.href;
@@ -35,15 +30,8 @@ module.exports.run = async () => {
   const mentions = [];
 
   for ( const link of links ) {
-    // Fetch and parse page
-    let result;
-    try {
-      result = await new Request(`${root}${link}`)
-      result = parser.parse(result);
-    } catch(error) {
-      Logger.error(error);
-      continue;
-    }
+    const result = await importHelper.fetchHTML(`${root}${link}`);
+    if (!result) continue;
 
     const title = result.querySelector('h2');
     const table = result.querySelectorAll('table tbody')

@@ -1,18 +1,9 @@
-const Request      = require('../../util/request');
 const importHelper = require('../../util/import-helper');
-const convert      = require('xml-js');
 
 // Function to query the map
 module.exports.run = async () => {
-  let result = await new Request("https://www.google.com/maps/d/kml?forcekml=1&mid=1OCxFeZMcMmjt_p-p0YV-aLR-pmrIxinB");
-
-  // Parse KML file
-  result = convert.xml2js(result, {
-    compact:           true,
-    ignoreDeclaration: true,
-    ignoreAttributes:  true,
-    trim:              true
-  });
+  const result = await importHelper.fetchKML("https://www.google.com/maps/d/kml?forcekml=1&mid=1OCxFeZMcMmjt_p-p0YV-aLR-pmrIxinB");
+  if (!result) return;
 
   // Collect source information
   const source = {

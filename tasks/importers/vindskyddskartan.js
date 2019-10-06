@@ -1,20 +1,10 @@
-const Request         = require('../../util/request');
 const importHelper    = require('../../util/import-helper');
 const roundCoordinate = require('../../util/round-coordinate');
-const parser          = require('xml-js');
-const {Mention}       = require('../../models');
 
 // Function to query the map
 module.exports.run = async () => {
-  let result = await new Request("https://www.google.com/maps/d/kml?forcekml=1&mid=1doLXXvokOtiMzthVz0SLFjEPmD4");
-
-  // Parse KML file
-  result = parser.xml2js(result, {
-    compact:           true,
-    ignoreDeclaration: true,
-    ignoreAttributes:  true,
-    trim:              true
-  });
+  const result = await importHelper.fetchKML("https://www.google.com/maps/d/kml?forcekml=1&mid=1doLXXvokOtiMzthVz0SLFjEPmD4");
+  if (!result) return;
 
   // Collect source information
   const source = {

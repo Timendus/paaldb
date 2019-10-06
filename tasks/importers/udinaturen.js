@@ -1,4 +1,5 @@
 const Request      = require('../../util/request');
+const Logger       = require('../../util/logger');
 const importHelper = require('../../util/import-helper');
 const root         = "https://admin.udinaturen.dk";
 
@@ -8,6 +9,7 @@ module.exports.run = async () => {
   //   39: Stor lejrplads (large camping)
   //   40: Frit teltningsområde (free tenting area)
   const locations = await fetchLocationsInCategories([38,39,40]);
+  if (!locations) return;
 
   // Collect source information
   const source = {
@@ -63,10 +65,15 @@ async function fetchLocationsInCategories(categories) {
   // 'Ud i naturen' paginates its results
   // Fetch all pages untill we have all locations
   do {
-    result = await new Request(`${root}${next}`);
-    result = JSON.parse(result);
-    locations = locations.concat(result.objects);
-    next = result.meta.next;
+    try {
+      result = await new Request(`${root}${next}`);
+      result = JSON.parse(result);
+      locations = locations.concat(result.objects);
+      next = result.meta.next;
+    } catch(error) {
+      Logger.error(error);
+      return false;
+    }
   } while ( next );
 
   return locations;

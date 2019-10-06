@@ -1,20 +1,11 @@
-const Request      = require('../../util/request');
 const importHelper = require('../../util/import-helper');
-const parser       = require('xml-js');
 const htmlParser   = require('node-html-parser');
 const {Mention}    = require('../../models');
 
 // Function to query the map
 module.exports.run = async () => {
-  let result = await new Request("https://www.wild-kamperen.nl/wp-content/plugins/leaflet-maps-marker/leaflet-kml.php?layer=1&name=show");
-
-  // Parse KML file
-  result = parser.xml2js(result, {
-    compact:           true,
-    ignoreDeclaration: true,
-    ignoreAttributes:  true,
-    trim:              true
-  });
+  const result = await importHelper.fetchKML("https://www.wild-kamperen.nl/wp-content/plugins/leaflet-maps-marker/leaflet-kml.php?layer=1&name=show");
+  if (!result) return;
 
   // Collect source information
   const source = {

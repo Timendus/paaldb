@@ -1,14 +1,10 @@
-const Request      = require('../../util/request');
 const importHelper = require('../../util/import-helper');
-const parser       = require('node-html-parser');
 const link         = "https://www.logerenbijdeboswachter.nl/paalkamperen";
 
 // Function to query the Staatsbosbeheer website
 module.exports.run = async () => {
-  let result = await new Request(link);
-
-  // Parse HTML file
-  result = parser.parse(result);
+  const result = await importHelper.fetchHTML(link);
+  if (!result) return;
 
   // Collect source information
   const mail  = result.querySelector('a.email').attributes.href;
