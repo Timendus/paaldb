@@ -84,18 +84,9 @@ async function fetchMentions({mentionUrls, mentions, result, source, parser}) {
   for ( const url of mentionUrls(result) ) {
     let result;
     try {
-      result = await new Request(url);
+      result = fetchAndParse(url, parser);
     } catch(error) {
       throw(`Error in mention request: ${error}`);
-    }
-
-    if (!result)
-      throw(`Received no mention content from ${url}`);
-
-    try {
-      result = parser(result);
-    } catch(error) {
-      throw(`Error in parsing mention data: ${error}`);
     }
 
     try {
