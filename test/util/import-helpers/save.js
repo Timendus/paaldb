@@ -3,10 +3,10 @@ const {
   Mention,
   Property,
   MentionProperty
-} = require('../../models');
+} = require('../../../models');
 
 const expect       = require('chai').expect;
-const importHelper = require('../../util/import-helper');
+const importHelper = require('../../../util/import-helpers/save');
 
 describe('Import helper', () => {
 

@@ -1,57 +1,15 @@
-const {Source, Mention, Property} = require('../models');
+const {Source, Mention, Property} = require('../../models');
 
-const safeHTML        = require("./safe-html");
-const Logger          = require('./logger');
-const Request         = require('./request');
-const roundCoordinate = require('./round-coordinate');
+const safeHTML        = require("../safe-html");
+const Logger          = require('../logger');
+const Request         = require('../request');
+const roundCoordinate = require('../round-coordinate');
 const path            = require('path');
 const proj4           = require('proj4');
-const xmlConverter    = require('xml-js');
-const htmlConverter   = require('node-html-parser');
 
 proj4.defs("EPSG:25832","+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
 module.exports = {
-
-  fetchKML: (url) => {
-    return new Promise((resolve, reject) => {
-      new Request(url)
-      .then(result => {
-        if (!result) {
-          Logger.error(`Received no content from ${url}`);
-          resolve(false);
-        }
-        resolve(xmlConverter.xml2js(result, {
-          compact:           true,
-          ignoreDeclaration: true,
-          ignoreAttributes:  true,
-          trim:              true
-        }));
-      })
-      .catch(error => {
-        Logger.error(error);
-        resolve(false);
-      });
-    });
-  },
-
-  fetchHTML: (url) => {
-    return new Promise((resolve, reject) => {
-      new Request(url)
-      .then(result => {
-        if (!result) {
-          Logger.error(`Received no content from ${url}`);
-          resolve(false);
-        }
-        resolve(htmlConverter.parse(result));
-      })
-      .catch(error => {
-        Logger.error(error);
-        resolve(false);
-      });
-    });
-  },
-
   save: async ({task, source, mentions, projection}) => {
     // Sanitize the input a bit
     task = path.basename(task);
@@ -81,9 +39,7 @@ module.exports = {
     Logger.log(`Task ${task}: Mentions marked as stale (${staleMentions.length}): [${staleMentions.map(c => c.name).join(',')}]`);
     Logger.log(`Task ${task}: Otherwise, updated ${numChanged} mentions`);
   }
-
 }
-
 
 async function saveSource(source) {
   const sourceObj = (await Source.findOrCreate({
