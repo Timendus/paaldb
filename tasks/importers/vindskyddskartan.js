@@ -14,7 +14,7 @@ module.exports = xmlImporter({
   }),
 
   // Collect the locations we mention
-  mentions: (xml, source) => {
+  mentions: (xml, {source}) => {
     let placemarks = xml.kml.Document.Folder.map(f => f.Placemark);
     placemarks = [].concat.apply([], placemarks); // Flatten
 

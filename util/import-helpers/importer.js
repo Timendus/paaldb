@@ -2,7 +2,7 @@ const save         = require('./save').save;
 const Logger       = require('../logger');
 const Request      = require('../request');
 
-module.exports = ({task, url, source, mentions, parser}) => ({
+module.exports = ({task, url, source, mentionUrls, mentions, parser}) => ({
   run: async () => {
     let result;
     try {
@@ -27,7 +27,11 @@ module.exports = ({task, url, source, mentions, parser}) => ({
     }
 
     try {
-      mentions = mentions(result, source);
+      if ( !mentionUrls ) {
+        mentions = mentions(result, {source, url});
+      } else {
+        mentions = await fetchMentions({mentionUrls, mentions, result, source, parser});
+      }
     } catch(error) {
       return Logger.error(`Error in mentions function: ${error}`);
     }
@@ -39,3 +43,33 @@ module.exports = ({task, url, source, mentions, parser}) => ({
     }
   }
 });
+
+async function fetchMentions({mentionUrls, mentions, result, source, parser}) {
+  const fetchedMentions = [];
+
+  for ( const url of mentionUrls(result) ) {
+    let result;
+    try {
+      result = await new Request(url);
+    } catch(error) {
+      throw(`Error in mention request: ${error}`);
+    }
+
+    if (!result)
+      throw(`Received no mention content from ${url}`);
+
+    try {
+      result = parser(result);
+    } catch(error) {
+      throw(`Error in parsing mention data: ${error}`);
+    }
+
+    try {
+      fetchedMentions.push(...mentions(result, {source, url}));
+    } catch(error) {
+      throw(`Error in mentions function: ${error}`);
+    }
+  }
+
+  return fetchedMentions;
+}
