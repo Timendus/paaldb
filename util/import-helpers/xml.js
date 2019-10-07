@@ -1,17 +1,15 @@
-const importer     = require('./importer');
-const xmlConverter = require('xml-js');
+const importer  = require('./importer');
+const xmlParser = require('xml-js');
 
-module.exports = ({task, url, source, mentionUrls, mentions}) => {
-  return importer({
-    task, url, source, mentionUrls, mentions,
+module.exports = (options) => {
+  options.parser = xml => {
+    return xmlParser.xml2js(xml, {
+      compact:           true,
+      ignoreDeclaration: true,
+      ignoreAttributes:  true,
+      trim:              true
+    });
+  };
 
-    parser: xml => {
-      return xmlConverter.xml2js(xml, {
-        compact:           true,
-        ignoreDeclaration: true,
-        ignoreAttributes:  true,
-        trim:              true
-      });
-    }
-  });
-}
+  return importer(options);
+};

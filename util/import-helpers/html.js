@@ -1,12 +1,10 @@
-const importer      = require('./importer');
-const htmlConverter = require('node-html-parser');
+const importer   = require('./importer');
+const htmlParser = require('node-html-parser');
 
-module.exports = ({task, url, source, mentionUrls, mentions}) => {
-  return importer({
-    task, url, source, mentionUrls, mentions,
+module.exports = (options) => {
+  options.parser = html => {
+    return htmlParser.parse(html);
+  };
 
-    parser: (html) => {
-      return htmlConverter.parse(html);
-    }
-  });
-}
+  return importer(options);
+};

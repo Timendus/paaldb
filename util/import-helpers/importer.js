@@ -1,23 +1,36 @@
-const save         = require('./save').save;
-const Logger       = require('../logger');
-const Request      = require('../request');
+const save    = require('./save').save;
+const Logger  = require('../logger');
+const Request = require('../request');
+const array   = require('../array');
 
-module.exports = ({task, url, source, mentionUrls, mentions, parser}) => ({
+module.exports = ({
+  task,
+  url,
+  nextUrl = () => false,
+  combineResponses = (a) => array.last(a),
+  source,
+  mentionUrls,
+  mentions,
+  parser,
+  projection
+}) => ({
+
   run: async () => {
-    let result;
+    let result = [];
     try {
-      result = await new Request(url);
+      let next = url;
+      do {
+        result.push(await fetchAndParse(next, parser));
+        next = nextUrl(array.last(result));
+      } while ( next );
     } catch(error) {
-      return Logger.error(`Error in request: ${error}`);
+      return Logger.error(`Error fetching and parsing: ${error}`);
     }
 
-    if (!result)
-      return Logger.error(`Received no content from ${url}`);
-
     try {
-      result = parser(result);
+      result = combineResponses(result);
     } catch(error) {
-      return Logger.error(`Error in parsing data: ${error}`);
+      return Logger.error(`Error combining responses: ${error}`);
     }
 
     try {
@@ -37,12 +50,33 @@ module.exports = ({task, url, source, mentionUrls, mentions, parser}) => ({
     }
 
     try {
-      await save({task, source, mentions});
+      await save({task, source, mentions, projection});
     } catch(error) {
       return Logger.error(`Error in saving source and mentions: ${error}`);
     }
   }
+
 });
+
+async function fetchAndParse(url, parser) {
+  let result;
+  try {
+    result = await new Request(url);
+  } catch(error) {
+    throw(`Error in request: ${error}`);
+  }
+
+  if (!result)
+    throw(`Received no content from ${url}`);
+
+  try {
+    result = parser(result);
+  } catch(error) {
+    throw(`Error in parsing data: ${error}`);
+  }
+
+  return result;
+}
 
 async function fetchMentions({mentionUrls, mentions, result, source, parser}) {
   const fetchedMentions = [];
