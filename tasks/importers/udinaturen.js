@@ -1,6 +1,6 @@
 const Request      = require('../../util/request');
 const Logger       = require('../../util/logger');
-const importHelper = require('../../util/import-helper');
+const importHelper = require('../../util/import-helpers/save');
 const root         = "https://admin.udinaturen.dk";
 
 module.exports.run = async () => {

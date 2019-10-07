@@ -5,7 +5,7 @@
 // website contains a large number of locations that few other sources mention,
 // so for the time being it's worth the hassle.
 
-const importHelper = require('../../util/import-helper');
+const importHelper = require('../../util/import-helpers/save');
 const root         = "http://www.bivakzone.be";
 
 // Function to query bivakzone.be

@@ -1,23 +1,25 @@
-const importHelper = require('../../util/import-helper');
+const htmlImporter = require('../../util/import-helpers/html');
 const link         = "https://www.logerenbijdeboswachter.nl/paalkamperen";
 
 // Function to query the Staatsbosbeheer website
-module.exports.run = async () => {
-  const result = await importHelper.fetchHTML(link);
-  if (!result) return;
+module.exports = htmlImporter({
+  task: __filename,
+  url:  link,
 
   // Collect source information
-  const mail  = result.querySelector('a.email').attributes.href;
-  const phone = result.querySelector('a.tel').attributes.href;
+  source: html => {
+    const mail  = html.querySelector('a.email').attributes.href;
+    const phone = html.querySelector('a.tel').attributes.href;
 
-  const source = {
-    name:        "Staatsbosbeheer",
-    description: result.querySelector('div.content').innerHTML,
-    contact:     `<a href='${mail}'>${mail.split(':')[1]}</a>, <a href="${phone}">${phone.split(':')[1]}</a>`
-  };
+    return {
+      name:        "Staatsbosbeheer",
+      description: html.querySelector('div.content').innerHTML,
+      contact:     `<a href='${mail}'>${mail.split(':')[1]}</a>, <a href="${phone}">${phone.split(':')[1]}</a>`
+    };
+  },
 
   // Collect the locations we mention
-  const mentions = result.querySelectorAll('article.visualLink div.content').map((p) => {
+  mentions: html => html.querySelectorAll('article.visualLink div.content').map((p) => {
     const coordinates = p.querySelector('div.nav a').attributes.href;
     if ( !coordinates ) return {};
 
@@ -30,12 +32,5 @@ module.exports.run = async () => {
       height:      height,
       link:        link
     }
-  });
-
-  // Save this data
-  await importHelper.save({
-    task: __filename,
-    source,
-    mentions
-  });
-}
+  })
+});

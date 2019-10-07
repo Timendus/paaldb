@@ -1,4 +1,4 @@
-const importHelper    = require('../../util/import-helper');
+const importHelper    = require('../../util/import-helpers/save');
 const roundCoordinate = require('../../util/round-coordinate');
 const {Mention}       = require('../../models');
 
