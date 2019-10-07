@@ -3,6 +3,7 @@ const Logger              = require('../util/logger');
 const string              = require('../util/string');
 const {Location, Mention} = require('../models');
 const locationService     = require('../services/location');
+const array               = require('../util/array');
 
 // Function to create and link locations
 module.exports.run = async () => {
@@ -77,7 +78,7 @@ function findLocations(locations, mentions) {
 
   return {
     locationsToCreate: locationsToCreate,
-    locationsToLink:   [...new Set(locationsToLink)] // "unique"
+    locationsToLink:   array.unique(locationsToLink)
   };
 }
 

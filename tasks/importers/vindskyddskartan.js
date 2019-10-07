@@ -1,5 +1,6 @@
 const xmlImporter     = require('../../util/import-helpers/xml');
 const roundCoordinate = require('../../util/round-coordinate');
+const array           = require('../../util/array');
 
 // Function to query the map
 module.exports = xmlImporter({
@@ -16,7 +17,7 @@ module.exports = xmlImporter({
   // Collect the locations we mention
   mentions: (xml, {source}) => {
     let placemarks = xml.kml.Document.Folder.map(f => f.Placemark);
-    placemarks = [].concat.apply([], placemarks); // Flatten
+    placemarks = array.flatten(placemarks);
 
     return placemarks.map(p => {
       const [lon, lat] = p.Point.coordinates._text.split(',');
