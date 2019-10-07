@@ -1,19 +1,18 @@
-const importHelper = require('../../util/import-helper');
+const xmlImporter = require('../../util/import-helpers/xml');
 
-// Function to query the map
-module.exports.run = async () => {
-  const result = await importHelper.fetchKML("https://www.google.com/maps/d/kml?forcekml=1&mid=1OCxFeZMcMmjt_p-p0YV-aLR-pmrIxinB");
-  if (!result) return;
+module.exports = xmlImporter({
+  task: __filename,
+  url:  "https://www.google.com/maps/d/kml?forcekml=1&mid=1OCxFeZMcMmjt_p-p0YV-aLR-pmrIxinB",
 
   // Collect source information
-  const source = {
+  source: xml => ({
     name:        "Kampeermeneer",
-    description: result.kml.Document.description._text,
+    description: xml.kml.Document.description._text,
     contact:     "<a href='https://www.kampeermeneer.nl/kampeerblog/'>Contactformulier Kampeermeneer</a>"
-  };
+  }),
 
   // Collect the locations we mention
-  const mentions = result.kml.Document.Folder.Placemark.map((p) => {
+  mentions: xml => xml.kml.Document.Folder.Placemark.map((p) => {
     const [lon, lat] = p.Point.coordinates._text.split(',');
 
     return {
@@ -21,12 +20,5 @@ module.exports.run = async () => {
       latitude:    lat,
       longitude:   lon
     }
-  });
-
-  // Save this data
-  await importHelper.save({
-    task: __filename,
-    source,
-    mentions
-  });
-}
+  })
+});

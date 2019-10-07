@@ -1,4 +1,7 @@
-const importHelper    = require('../../util/import-helper');
+const save            = require('../../util/import-helpers/save');
+const html            = require('../../util/import-helpers/html')();
+const xml             = require('../../util/import-helpers/xml')();
+const Logger          = require('../../util/logger');
 const roundCoordinate = require('../../util/round-coordinate');
 const {Mention}       = require('../../models');
 
@@ -7,8 +10,14 @@ module.exports.run = async () => {
   // Stefan's map is more up to date and has more locations, but his website has
   // more complete descriptions. So this importer fetches both, and combines the
   // information where possible.
-  const map = await importHelper.fetchKML("https://www.google.com/maps/d/kml?forcekml=1&mid=1SdsMhcQBTrVjABZaLXYPJZeOgfA");
-  const website = await importHelper.fetchHTML("https://sites.google.com/site/paalkampeerders/system/app/pages/subPages?path=/locatiebeschrijvingen");
+  let map, website;
+  try {
+    map     = await  xml.fetchAndParse("https://www.google.com/maps/d/kml?forcekml=1&mid=1SdsMhcQBTrVjABZaLXYPJZeOgfA");
+    website = await html.fetchAndParse("https://sites.google.com/site/paalkampeerders/system/app/pages/subPages?path=/locatiebeschrijvingen");
+  } catch(error) {
+    return Logger.error(`Error in Stefan's importer: ${error}`);
+  }
+
   if (!map || !website) return;
 
   // Collect source information
@@ -39,7 +48,12 @@ module.exports.run = async () => {
   // Add links and descriptions to mentions from the website
   for ( const anchor of website.querySelectorAll('.sites-table a') ) {
     const link = `https://sites.google.com${anchor.attributes.href}`;
-    const page = await importHelper.fetchHTML(link);
+    let page;
+    try {
+      page = await html.fetchAndParse(link);
+    } catch(error) {
+      continue;
+    }
     if (!page) continue;
 
     // Take the page content, remove the messy top table
@@ -64,7 +78,7 @@ module.exports.run = async () => {
   }
 
   // Save this data
-  await importHelper.save({
+  await save({
     task: __filename,
     source,
     mentions
