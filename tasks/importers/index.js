@@ -6,12 +6,6 @@ module.exports.run = () => {
   // Run all importers
   return Promise.all(
     Object.values(requireDir(__filename, __dirname))
-          .map(i => {
-            try {
-              i.run();
-            } catch(error) {
-              Logger.error(error);
-            }
-          })
+          .map(i => i.run())
   );
 }
