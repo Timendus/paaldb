@@ -1,7 +1,7 @@
 const importer  = require('./importer');
 const xmlParser = require('xml-js');
 
-module.exports = (options) => {
+module.exports = (options = {}) => {
   options.parser = xml => {
     return xmlParser.xml2js(xml, {
       compact:           true,

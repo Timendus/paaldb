@@ -9,37 +9,35 @@ const proj4           = require('proj4');
 
 proj4.defs("EPSG:25832","+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
-module.exports = {
-  save: async ({task, source, mentions, projection}) => {
-    // Sanitize the input a bit
-    task = path.basename(task);
-    projection = projection || 'WGS84';
+module.exports = async ({task, source, mentions, projection}) => {
+  // Sanitize the input a bit
+  task = path.basename(task);
+  projection = projection || 'WGS84';
 
-    // If no data, assume task or remote source is broken and don't touch the database
-    if ( !source.name || !source.description || !source.contact || mentions.length == 0 )
-      return Logger.error(`Task ${task} seems to be down`);
+  // If no data, assume task or remote source is broken and don't touch the database
+  if ( !source.name || !source.description || !source.contact || mentions.length == 0 )
+    return Logger.error(`Task ${task} seems to be down`);
 
-    // Create || find and update our source
-    const sourceObj = await saveSource(source);
+  // Create || find and update our source
+  const sourceObj = await saveSource(source);
 
-    // Which mentions does our source have, before we save the new ones?
-    const oldMentions = await sourceObj.getMentions();
+  // Which mentions does our source have, before we save the new ones?
+  const oldMentions = await sourceObj.getMentions();
 
-    // Create || find and update our mentions (and link to this source)
-    const {numChanged, newMentions} = await saveMentions(sourceObj, mentions, projection);
+  // Create || find and update our mentions (and link to this source)
+  const {numChanged, newMentions} = await saveMentions(sourceObj, mentions, projection);
 
-    // Mark those mentions that have disappeared from the source as stale
-    const staleMentions = await markStaleMentions(oldMentions, newMentions);
+  // Mark those mentions that have disappeared from the source as stale
+  const staleMentions = await markStaleMentions(oldMentions, newMentions);
 
-    // Which of the mentions we've seen this time are really newly created?
-    const oldMentionIds = oldMentions.map(m => m.id);
-    const createdMentions = newMentions.filter(n => !oldMentionIds.includes(n.id));
+  // Which of the mentions we've seen this time are really newly created?
+  const oldMentionIds = oldMentions.map(m => m.id);
+  const createdMentions = newMentions.filter(n => !oldMentionIds.includes(n.id));
 
-    Logger.log(`Task ${task}: Newly created mentions (${createdMentions.length}): [${createdMentions.map(c => c.name).join(',')}]`);
-    Logger.log(`Task ${task}: Mentions marked as stale (${staleMentions.length}): [${staleMentions.map(c => c.name).join(',')}]`);
-    Logger.log(`Task ${task}: Otherwise, updated ${numChanged} mentions`);
-  }
-}
+  Logger.log(`Task ${task}: Newly created mentions (${createdMentions.length}): [${createdMentions.map(c => c.name).join(',')}]`);
+  Logger.log(`Task ${task}: Mentions marked as stale (${staleMentions.length}): [${staleMentions.map(c => c.name).join(',')}]`);
+  Logger.log(`Task ${task}: Otherwise, updated ${numChanged} mentions`);
+};
 
 async function saveSource(source) {
   const sourceObj = (await Source.findOrCreate({
@@ -66,7 +64,9 @@ async function saveMentions(sourceObj, mentions, projection) {
 
     const mentionObj = (await Mention.findOrCreate({
       where: {
-        externalId: mention.externalId ? '' + mention.externalId : createExternalId(sourceObj, mention),
+        externalId: mention.externalId ?
+          '' + mention.externalId :
+          `${sourceObj.name}-${roundCoordinate(mention.latitude, 3)}-${roundCoordinate(mention.longitude, 3)}`,
         SourceId:   sourceObj.id
       }
     })).shift();
@@ -100,13 +100,6 @@ async function saveMentions(sourceObj, mentions, projection) {
 
   return {numChanged, newMentions};
 }
-
-function createExternalId(sourceObj, mention) {
-  return `${sourceObj.name}-${roundCoordinate(mention.latitude, 3)}-${roundCoordinate(mention.longitude, 3)}`;
-}
-
-// Export for testing
-module.exports.createExternalId = createExternalId;
 
 async function saveProperties(mentionObj, properties) {
   for ( const property in properties ) {
