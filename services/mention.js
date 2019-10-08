@@ -10,6 +10,22 @@ module.exports = {
       ],
       limit: 1
     })
+  },
+
+  findAll: () => {
+    return Mention.findAll();
+  },
+
+  findOne: (id) => {
+    return Mention.findOne({
+      where: { id },
+      include: [
+        {
+          all: true,
+          nested: true
+        }
+      ]
+    });
   }
 
 }
