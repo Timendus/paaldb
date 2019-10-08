@@ -89,7 +89,7 @@ module.exports = ({
     for ( const url of mentionUrls(result) ) {
       let result;
       try {
-        result = fetchAndParse(url, parser);
+        result = await fetchAndParse(url, parser);
       } catch(error) {
         throw(`Error in mention request: ${error}`);
       }
