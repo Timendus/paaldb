@@ -89,6 +89,13 @@ window.addEventListener('load', async () => {
         </section>
       ` : '' }
 
+      <section class='location'>
+        <p>
+          Locatie: (<tt>${Math.abs(location.latitude)}</tt>° ${location.latitude > 0 ? 'N' : 'Z'},
+            <tt>${Math.abs(location.longitude)}</tt>° ${location.longitude > 0 ? 'O' : 'W'})
+        </p>
+      </section>
+
       ${ location.description ? `
         <section class='description'>
           ${location.description}
