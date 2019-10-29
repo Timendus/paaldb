@@ -92,6 +92,9 @@ html, body, #map {
   margin-left: -3em;
   float: left;
 }
+#location .location .coordinate {
+  font-size: 0.9em;
+}
 #location .description {
   border-left: 3px solid rgba(174, 255, 100, 0.3);
   padding-left: 1em;

@@ -91,8 +91,11 @@ window.addEventListener('load', async () => {
 
       <section class='location'>
         <p>
-          Locatie: (<tt>${Math.abs(location.latitude)}</tt>° ${location.latitude > 0 ? 'N' : 'Z'},
-            <tt>${Math.abs(location.longitude)}</tt>° ${location.longitude > 0 ? 'O' : 'W'})
+          Locatie:
+          <a href='http://maps.google.com/maps?t=k&q=loc:${location.latitude}+${location.longitude}' target='_blank'>
+            <span class='coordinate'>${Math.abs(location.latitude)}</span>° ${location.latitude > 0 ? 'N' : 'Z'},
+            <span class='coordinate'>${Math.abs(location.longitude)}</span>° ${location.longitude > 0 ? 'O' : 'W'}
+          </a>
         </p>
       </section>
 
