@@ -15,7 +15,7 @@ module.exports = async ({task, source, mentions, projection}) => {
   projection = projection || 'WGS84';
 
   // If no data, assume task or remote source is broken and don't touch the database
-  if ( !source.name || !source.description || !source.contact || mentions.length == 0 )
+  if ( !source.name || !source.description || !source.contact )
     return Logger.error(`Task ${task} seems to be down`);
 
   // Create || find and update our source
