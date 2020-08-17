@@ -6,7 +6,7 @@
 // so for the time being it's worth the hassle.
 
 const htmlImporter = require('../../util/import-helpers/html');
-const root         = "http://www.bivakzone.be";
+const root         = "https://www.bivakzone.be";
 
 module.exports = htmlImporter({
   task: __filename,
